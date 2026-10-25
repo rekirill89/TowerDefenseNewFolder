@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace _Project.Scripts
 {
+    [RequireComponent(typeof(Collider2D))]
     public class EnemyDetector : MonoBehaviour
     {
         [SerializeField] private float _detectRadius = 4;

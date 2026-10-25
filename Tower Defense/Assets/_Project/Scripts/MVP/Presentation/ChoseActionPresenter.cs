@@ -48,7 +48,7 @@ namespace _Project.Scripts.MVP
         private void BuildableClickedHandler(Vector2 pos)
         {
             _currentPos = pos;
-            _choseActionPanelView.LocalCanvas.transform.position = pos; 
+            _choseActionPanelView.MoveCanvasTo(pos);
             _choseActionPanelView.Show();
         }
     }

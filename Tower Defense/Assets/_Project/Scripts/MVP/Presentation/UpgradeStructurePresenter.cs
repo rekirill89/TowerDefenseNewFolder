@@ -34,10 +34,7 @@ namespace _Project.Scripts.MVP
 
         private void OnStrongholdClickedHandler()
         {
-            if(_upgradeStructurePanelView.isActiveAndEnabled)
-                _upgradeStructurePanelView.Hide();
-            else
-                _upgradeStructurePanelView.Show();
+            _upgradeStructurePanelView.Toggle();
         }
 
         private void OnUpgradeStructHandler()

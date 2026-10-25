@@ -31,6 +31,11 @@ namespace _Project.Scripts.MVP
             _constructArcherButton.OnClick -= _dic[StructureEnum.Archer];
         }
 
+        public void MoveCanvasTo(Vector2 pos)
+        {
+            LocalCanvas.transform.position = pos; 
+        }
+        
         private void ConstructButtonClickedHandler(StructureEnum structureEnum)
         {
             Debug.Log(structureEnum);

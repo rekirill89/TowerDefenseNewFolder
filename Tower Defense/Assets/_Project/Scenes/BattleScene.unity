@@ -452,7 +452,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6e8dbee74fe94e0b98b18609ac6b3ef7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::_Project.Scripts.MVP.Views.BattleControllerView
-  StartButton: {fileID: 494151548}
+  <StartButton>k__BackingField: {fileID: 494151548}
 --- !u!114 &320794632
 MonoBehaviour:
   m_ObjectHideFlags: 0
