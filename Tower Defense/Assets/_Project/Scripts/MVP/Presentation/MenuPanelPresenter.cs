@@ -5,14 +5,14 @@ namespace _Project.Scripts.MVP
 {
     public class MenuPanelPresenter : IDisposable
     {
-        private readonly SceneLoaderService _sceneLoaderService;
-        private readonly MetaCurrencyWallet _metaCurrencyWallet;
+        private readonly ISceneLoaderService _sceneLoaderService;
+        private readonly IMetaCurrencyWallet _metaCurrencyWallet;
         private readonly MenuPanelView _menuPanelView;
 
         public MenuPanelPresenter(
             MenuPanelView menuPanelView,
-            MetaCurrencyWallet metaCurrencyWallet,
-            SceneLoaderService sceneLoaderService)
+            IMetaCurrencyWallet metaCurrencyWallet,
+            ISceneLoaderService sceneLoaderService)
         {
             _sceneLoaderService = sceneLoaderService;
             _metaCurrencyWallet = metaCurrencyWallet;

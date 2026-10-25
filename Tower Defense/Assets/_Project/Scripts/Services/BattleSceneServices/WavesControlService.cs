@@ -4,15 +4,14 @@ using Cysharp.Threading.Tasks;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-public class WavesControlService : IDisposable
+public class WavesControlService : IWavesControlService
 {
-    public delegate void NewWaveStarted(int waveIndex, int totalEnemiesThisWave);
     public event NewWaveStarted OnNewWaveStarted; 
     public event Action<int> OnTimerIncremented;
 
     private int _totalEnemyAmountPerWave = 0;
 
-    private readonly EnemySpawnService _enemySpawnService;
+    private readonly IEnemySpawnService _enemySpawnService;
 
     private readonly float _maxDirX = 1f;
     private readonly float _maxDirY = 1f;
@@ -31,7 +30,7 @@ public class WavesControlService : IDisposable
     
     private CancellationTokenSource _cts = new CancellationTokenSource();
 
-    public WavesControlService(EnemySpawnService enemySpawnService)
+    public WavesControlService(IEnemySpawnService enemySpawnService)
     {
         _enemySpawnService = enemySpawnService;
         _spawnTimestep = _spawnInitTimestep;

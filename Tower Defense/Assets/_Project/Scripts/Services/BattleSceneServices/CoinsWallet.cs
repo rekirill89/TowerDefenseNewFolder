@@ -3,9 +3,8 @@ using UnityEngine;
 
 namespace _Project.Scripts
 {
-    public class CoinsWallet
+    public class CoinsWallet : ICoinsWallet
     {
-        public delegate void CoinsChanged(int coins);
         public event CoinsChanged OnCoinsChanged;
         public int CoinsBalance {get; private set;}
 

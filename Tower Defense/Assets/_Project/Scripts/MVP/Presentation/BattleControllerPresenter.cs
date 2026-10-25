@@ -5,10 +5,10 @@ namespace _Project.Scripts.MVP
 {
     public class BattleControllerPresenter : IDisposable
     {
+        private readonly IBattleControlService _battleControlService;
         private readonly BattleStartPanelView _battleStartPanelView;
-        private readonly BattleControlService _battleControlService;
         
-        public BattleControllerPresenter(BattleStartPanelView battleStartPanelView, BattleControlService battleControlService)
+        public BattleControllerPresenter(BattleStartPanelView battleStartPanelView, IBattleControlService battleControlService)
         {
             _battleStartPanelView = battleStartPanelView;
             _battleControlService = battleControlService;
@@ -16,7 +16,7 @@ namespace _Project.Scripts.MVP
 
         public void Dispose()
         {
-            _battleStartPanelView.StartButton.OnClick -= _battleControlService.StartBattle;
+            _battleStartPanelView.StartButton.OnClick -= OnStartBattleButtonOnClickHandler;
         }
 
         public void Init()

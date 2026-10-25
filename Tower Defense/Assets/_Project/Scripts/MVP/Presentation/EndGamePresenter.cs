@@ -5,14 +5,14 @@ namespace _Project.Scripts.MVP
 {
     public class EndGamePresenter : IDisposable
     {
+        private readonly IBattleControlService _battleControlService;
+        private readonly ISceneLoaderService _sceneLoaderService;
         private readonly EndGamePanelView _endGamePanelView;
-        private readonly BattleControlService _battleControlService;
-        private readonly SceneLoaderService _sceneLoaderService;
 
         public EndGamePresenter(
             EndGamePanelView endGamePanelView,
-            BattleControlService battleControlService, 
-            SceneLoaderService sceneLoaderService)
+            IBattleControlService battleControlService, 
+            ISceneLoaderService sceneLoaderService)
         {
             _endGamePanelView = endGamePanelView;
             _battleControlService = battleControlService;

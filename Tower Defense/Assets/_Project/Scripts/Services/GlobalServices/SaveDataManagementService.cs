@@ -2,12 +2,12 @@
 
 namespace _Project.Scripts
 {
-    public class SaveDataManagementService
+    public class SaveDataManagementService : ISaveDataManagementService
     {
-        private readonly SaveLoadService _saveLoadService;
-        private readonly MetaCurrencyWallet _metaWallet;
+        private readonly ISaveLoadService _saveLoadService;
+        private readonly IMetaCurrencyWallet _metaWallet;
 
-        public SaveDataManagementService(SaveLoadService saveLoadService, MetaCurrencyWallet metaWallet)
+        public SaveDataManagementService(ISaveLoadService saveLoadService, IMetaCurrencyWallet metaWallet)
         {
             _saveLoadService = saveLoadService;
             _metaWallet = metaWallet;

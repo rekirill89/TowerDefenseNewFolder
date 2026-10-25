@@ -15,10 +15,10 @@ namespace _Project.Scripts
         {
             DontDestroyOnLoad(gameObject);
 
-            var saveLoadService = new SaveLoadService();
-            var sceneLoaderService = new SceneLoaderService();
-            var metaWallet = new MetaCurrencyWallet(0);
-            var saveDataManagementService = new SaveDataManagementService(saveLoadService, metaWallet);
+            ISaveLoadService saveLoadService = new SaveLoadService();
+            ISceneLoaderService sceneLoaderService = new SceneLoaderService();
+            IMetaCurrencyWallet metaWallet = new MetaCurrencyWallet(0);
+            ISaveDataManagementService saveDataManagementService = new SaveDataManagementService(saveLoadService, metaWallet);
             
             saveDataManagementService.Init();
             globalServicesRef.Init(sceneLoaderService, saveLoadService, metaWallet);

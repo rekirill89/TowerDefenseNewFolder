@@ -3,27 +3,26 @@ using UnityEngine;
 
 namespace _Project.Scripts
 {
-    public class RewardService : IDisposable
+    public class RewardService : IRewardService
     {
-        public delegate void RewardGained(RewardEnum rewardEnum, int amount);
         public event RewardGained OnRewardGained;
 
-        private readonly BattleControlService _battleControlService;
-        private readonly BattleInfoService _battleInfoService;
-        private readonly EnemySpawnService _enemySpawnService;
-        private readonly SaveLoadService _saveLoadService;
-        private readonly CoinsWallet _coinsWallet;
-        private readonly MetaCurrencyWallet _metaWallet;
+        private readonly IBattleControlService _battleControlService;
+        private readonly IBattleInfoService _battleInfoService;
+        private readonly IEnemySpawnService _enemySpawnService;
+        private readonly ISaveLoadService _saveLoadService;
+        private readonly ICoinsWallet _coinsWallet;
+        private readonly IMetaCurrencyWallet _metaWallet;
         private RewardsSO _rewardSO;
 
         public RewardService(
-            BattleControlService battleControlService,
-            BattleInfoService battleInfoService,
+            IBattleControlService battleControlService,
+            IBattleInfoService battleInfoService,
             RewardsSO rewardsSO,
-            EnemySpawnService enemySpawnService, 
-            SaveLoadService saveLoadService,
-            CoinsWallet coinsWallet,
-            MetaCurrencyWallet metaWallet)
+            IEnemySpawnService enemySpawnService, 
+            ISaveLoadService saveLoadService,
+            ICoinsWallet coinsWallet,
+            IMetaCurrencyWallet metaWallet)
         {
             _battleControlService = battleControlService;
             _battleInfoService = battleInfoService;

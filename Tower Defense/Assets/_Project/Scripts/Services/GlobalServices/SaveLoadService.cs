@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace _Project.Scripts
 {
-    public class SaveLoadService
+    public class SaveLoadService : ISaveLoadService
     {
         private const string META_CURRENCY_BALANCE_KEY = "MetaCurrencyBalance";
         

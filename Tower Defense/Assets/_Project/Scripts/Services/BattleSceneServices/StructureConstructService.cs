@@ -6,15 +6,15 @@ using Object = UnityEngine.Object;
 
 namespace _Project.Scripts
 {
-    public class StructureConstructService
+    public class StructureConstructService : IStructureConstructService
     {
         public event Action OnStructureConstructed;
 
-        private readonly CoinsWallet _coinsWallet;
+        private readonly ICoinsWallet _coinsWallet;
         private readonly List<BaseTower> _constructedTowers;
         private readonly Dictionary<StructureEnum, BaseTower> _baseTowersDic;
         
-        public StructureConstructService(CoinsWallet coinsWallet, Archer archerPrefab, Cannon cannonPrefab)
+        public StructureConstructService(ICoinsWallet coinsWallet, Archer archerPrefab, Cannon cannonPrefab)
         {
             _coinsWallet = coinsWallet;
             _constructedTowers = new List<BaseTower>();

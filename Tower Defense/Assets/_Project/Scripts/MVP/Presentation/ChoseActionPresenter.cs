@@ -5,16 +5,16 @@ namespace _Project.Scripts.MVP
 {
     public class ChoseActionPresenter : IDisposable
     {
+        private readonly IStructureConstructService _structureConstructService;
         private readonly ChoseActionPanelView _choseActionPanelView;
         private readonly ScreenInputHandler _screenInputHandler;
-        private readonly StructureConstructService _structureConstructService;
         
         private Vector2 _currentPos =  Vector2.zero;
 
         public ChoseActionPresenter(
             ChoseActionPanelView choseActionPanelView,
             ScreenInputHandler screenInputHandler,
-            StructureConstructService structureConstructService)
+            IStructureConstructService structureConstructService)
         {
             _choseActionPanelView = choseActionPanelView;
             _screenInputHandler = screenInputHandler;

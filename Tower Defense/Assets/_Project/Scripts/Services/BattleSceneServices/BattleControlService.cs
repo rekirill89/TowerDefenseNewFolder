@@ -4,29 +4,29 @@ using UnityEngine;
 
 namespace _Project.Scripts
 {
-    public class BattleControlService : IDisposable
+    public class BattleControlService : IBattleControlService
     {
         public event Action OnBattleFinished;
         public event Action OnBattleStarted;
 
-        private readonly WavesControlService _wavesControlService;
+        private readonly IWavesControlService _wavesControlService;
         private readonly Stronghold _stronghold;
-        private readonly EnemySpawnService _enemySpawnService;
-        private readonly StructureConstructService _structureConstructService;
-        private readonly CoinsWallet _coinsWallet;
-        private readonly UpgradeStructureService _upgradeStructureService;
+        private readonly IEnemySpawnService _enemySpawnService;
+        private readonly IStructureConstructService _structureConstructService;
+        private readonly ICoinsWallet _coinsWallet;
+        private readonly IUpgradeStructureService _upgradeStructureService;
 
-        private readonly BattleInfoService _battleInfoService;
+        private readonly IBattleInfoService _battleInfoService;
 
         private BattleState _state;
 
         public BattleControlService(
-            WavesControlService wavesControlService, 
-            EnemySpawnService enemySpawnService,
-            StructureConstructService structureConstructService,
-            CoinsWallet coinsWallet,
-            UpgradeStructureService upgradeStructureService,
-            BattleInfoService battleInfoService,
+            IWavesControlService wavesControlService, 
+            IEnemySpawnService enemySpawnService,
+            IStructureConstructService structureConstructService,
+            ICoinsWallet coinsWallet,
+            IUpgradeStructureService upgradeStructureService,
+            IBattleInfoService battleInfoService,
             Stronghold stronghold)
         {
             _wavesControlService = wavesControlService;

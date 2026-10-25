@@ -2,14 +2,14 @@
 {
     public class GlobalServices
     {
-        public MetaCurrencyWallet MetaWallet { get; private set; }
-        public SceneLoaderService SceneLoaderService { get; private set; }
-        public SaveLoadService SaveLoadService { get; private set; }
+        public IMetaCurrencyWallet MetaWallet { get; private set; }
+        public ISceneLoaderService SceneLoaderService { get; private set; }
+        public ISaveLoadService SaveLoadService { get; private set; }
 
         public GlobalServices(
-            SceneLoaderService sceneLoaderService, 
-            SaveLoadService saveLoadService,
-            MetaCurrencyWallet metaWallet)
+            ISceneLoaderService sceneLoaderService, 
+            ISaveLoadService saveLoadService,
+            IMetaCurrencyWallet metaWallet)
         {
             SceneLoaderService = sceneLoaderService;
             SaveLoadService = saveLoadService;

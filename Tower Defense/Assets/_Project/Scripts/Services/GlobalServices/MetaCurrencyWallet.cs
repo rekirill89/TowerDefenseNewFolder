@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace _Project.Scripts
 {
-    public class MetaCurrencyWallet
+    public class MetaCurrencyWallet : IMetaCurrencyWallet
     {
         public event Action<int> OnBalanceChanged;
         public int CurrentBalance { get; private set; }

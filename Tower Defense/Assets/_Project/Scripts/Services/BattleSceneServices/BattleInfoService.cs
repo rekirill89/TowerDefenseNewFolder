@@ -2,13 +2,13 @@
 
 namespace _Project.Scripts
 {
-    public class BattleInfoService : IDisposable
+    public class BattleInfoService : IBattleInfoService
     {
-        private readonly EnemySpawnService _enemySpawnService;
-        private readonly WavesControlService _wavesControlService;
+        private readonly IEnemySpawnService _enemySpawnService;
+        private readonly IWavesControlService _wavesControlService;
         private BattleInfoData _battleInfoData;
 
-        public BattleInfoService(EnemySpawnService enemySpawnService, WavesControlService wavesControlService)
+        public BattleInfoService(IEnemySpawnService enemySpawnService, IWavesControlService wavesControlService)
         {
             _enemySpawnService = enemySpawnService;
             _wavesControlService = wavesControlService;

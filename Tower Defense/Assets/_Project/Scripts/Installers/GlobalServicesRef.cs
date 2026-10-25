@@ -9,9 +9,9 @@ namespace _Project.Scripts
         public GlobalServices GlobalServices { get; private set; }
 
         public void Init(
-            SceneLoaderService sceneLoaderService, 
-            SaveLoadService saveLoadService,
-            MetaCurrencyWallet metaWallet)
+            ISceneLoaderService sceneLoaderService, 
+            ISaveLoadService saveLoadService,
+            IMetaCurrencyWallet metaWallet)
         {
             GlobalServices = new GlobalServices(sceneLoaderService, saveLoadService, metaWallet);
         }

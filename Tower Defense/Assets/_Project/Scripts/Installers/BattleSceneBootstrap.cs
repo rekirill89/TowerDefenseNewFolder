@@ -30,14 +30,14 @@ namespace _Project.Scripts
 
         private readonly DisposableCollector _disposableCollector = new DisposableCollector();
 
-        private BattleControlService _battleControlService;
-        private WavesControlService _wavesControlService;
-        private EnemySpawnService _enemySpawnService;
-        private StructureConstructService _structureConstructService;
-        private CoinsWallet _coinsWallet;
-        private RewardService _rewardService;
-        private UpgradeStructureService _upgradeStructureService;
-        private BattleInfoService _battleInfoService;
+        private IBattleControlService _battleControlService;
+        private IWavesControlService _wavesControlService;
+        private IEnemySpawnService _enemySpawnService;
+        private IStructureConstructService _structureConstructService;
+        private ICoinsWallet _coinsWallet;
+        private IRewardService _rewardService;
+        private IUpgradeStructureService _upgradeStructureService;
+        private IBattleInfoService _battleInfoService;
 
         private MediatorPresenter _mediatorPresenter;
 

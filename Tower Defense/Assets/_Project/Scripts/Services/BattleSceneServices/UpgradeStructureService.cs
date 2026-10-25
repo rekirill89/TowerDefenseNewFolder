@@ -4,19 +4,19 @@ using UnityEngine;
 using Object = UnityEngine.Object;
 namespace _Project.Scripts
 {
-    public class UpgradeStructureService
+    public class UpgradeStructureService : IUpgradeStructureService
     {
         public event Action OnStructUpgraded;
         
         private readonly UpgradeStructureSO _upgradeStrongholdSo;
         private readonly Dictionary<UpgradeStructureEnum, Action> _dic;
         private readonly Stronghold _stronghold;
-        private readonly CoinsWallet _coinsWallet;
+        private readonly ICoinsWallet _coinsWallet;
 
         private UpgradeStructureSO _upgradeStrongholdSoCopy;
         
         public UpgradeStructureService(
-            CoinsWallet coinsWallet, 
+            ICoinsWallet coinsWallet, 
             Stronghold stronghold, 
             UpgradeStructureSO upgradeStrongholdSo)
         {

@@ -4,10 +4,8 @@ using _Project.Scripts;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-public class EnemySpawnService : IDisposable
+public class EnemySpawnService : IEnemySpawnService
 {
-    public delegate void EnemiesCountChanged(int count);
-    public delegate void EnemySpawned(Enemy enemy);
     public event EnemiesCountChanged OnEnemiesCountChanged;
     public event Action OnEnemyKilled;
     public event EnemySpawned OnEnemySpawned;

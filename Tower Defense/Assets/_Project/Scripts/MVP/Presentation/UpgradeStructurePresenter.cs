@@ -4,13 +4,13 @@ namespace _Project.Scripts.MVP
 {
     public class UpgradeStructurePresenter : IDisposable
     {
+        private readonly IUpgradeStructureService _upgradeStructureService;
         private readonly UpgradeStructurePanelView _upgradeStructurePanelView;
-        private readonly UpgradeStructureService _upgradeStructureService;
         private readonly ScreenInputHandler _screenInputHandler;
 
         public UpgradeStructurePresenter(
             UpgradeStructurePanelView upgradeStructurePanelView,
-            UpgradeStructureService upgradeStructureService,
+            IUpgradeStructureService upgradeStructureService,
             ScreenInputHandler screenInputHandler)
         {
            _upgradeStructurePanelView = upgradeStructurePanelView;

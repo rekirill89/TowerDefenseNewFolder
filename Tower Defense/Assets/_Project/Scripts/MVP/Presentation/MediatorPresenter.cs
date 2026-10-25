@@ -6,14 +6,14 @@ namespace _Project.Scripts.MVP
 {
     public class MediatorPresenter : IDisposable
     {
-        private readonly BattleControlService _battleControlService;
-        private readonly EnemySpawnService _enemySpawnService;
-        private readonly WavesControlService _wavesControlService;
+        private readonly IBattleControlService _battleControlService;
+        private readonly IEnemySpawnService _enemySpawnService;
+        private readonly IWavesControlService _wavesControlService;
+        private readonly IStructureConstructService _structureConstructService;
+        private readonly ICoinsWallet _coinsWallet;
+        private readonly IUpgradeStructureService _upgradeStructureService;
+        private readonly ISceneLoaderService _sceneLoaderService;
         private readonly ScreenInputHandler _screenInputHandler;
-        private readonly StructureConstructService _structureConstructService;
-        private readonly CoinsWallet _coinsWallet;
-        private readonly UpgradeStructureService _upgradeStructureService;
-        private readonly SceneLoaderService _sceneLoaderService;
         private readonly BattleStartPanelView _battleStartPanelView;
         private readonly InfoPanelView _infoPanelView;
         private readonly ChoseActionPanelView _choseActionPanelView;
@@ -23,14 +23,14 @@ namespace _Project.Scripts.MVP
         private readonly DisposableCollector _disposableCollector = new DisposableCollector();
 
         public MediatorPresenter(
-            BattleControlService battleControlService, 
-            EnemySpawnService enemySpawnService,
-            WavesControlService wavesControlService,
+            IBattleControlService battleControlService, 
+            IEnemySpawnService enemySpawnService,
+            IWavesControlService wavesControlService,
             ScreenInputHandler screenInputHandler,
-            StructureConstructService structureConstructService,
-            CoinsWallet coinsWallet,
-            UpgradeStructureService upgradeStructureService,
-            SceneLoaderService sceneLoaderService,
+            IStructureConstructService structureConstructService,
+            ICoinsWallet coinsWallet,
+            IUpgradeStructureService upgradeStructureService,
+            ISceneLoaderService sceneLoaderService,
             BattleStartPanelView battleStartPanelView,
             InfoPanelView infoPanelView,
             ChoseActionPanelView choseActionPanelView,

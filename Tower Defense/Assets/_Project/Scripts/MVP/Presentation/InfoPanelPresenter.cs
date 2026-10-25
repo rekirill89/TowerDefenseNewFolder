@@ -4,21 +4,21 @@ namespace _Project.Scripts.MVP
 {
     public class InfoPanelPresenter : IDisposable
     {
-        private readonly EnemySpawnService _enemySpawnService;
-        private readonly WavesControlService _wavesControlService;
-        private readonly CoinsWallet _coinsWallet;
+        private readonly IEnemySpawnService _enemySpawnService;
+        private readonly IWavesControlService _wavesControlService;
+        private readonly ICoinsWallet _coinsWallet;
+        private readonly IBattleControlService _battleControlService;
         private readonly InfoPanelView _infoPanelView;
-        private readonly BattleControlService _battleControlService;
 
         private int _totalEnemies;
         private int _enemiesLeft;
         
         public InfoPanelPresenter(
             InfoPanelView infoPanelView, 
-            BattleControlService battleControlService,
-            EnemySpawnService enemySpawnService, 
-            WavesControlService wavesControlService, 
-            CoinsWallet coinsWallet)
+            IBattleControlService battleControlService,
+            IEnemySpawnService enemySpawnService, 
+            IWavesControlService wavesControlService, 
+            ICoinsWallet coinsWallet)
         {
             _enemySpawnService = enemySpawnService;
             _wavesControlService = wavesControlService;
