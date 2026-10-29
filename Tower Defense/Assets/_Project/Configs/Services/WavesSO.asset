@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e89b3c021744de780528f4ace32f2eb, type: 3}
+  m_Name: WavesSO
+  m_EditorClassIdentifier: Assembly-CSharp::_Project.Scripts.WavesSO
+  <MaxDirX>k__BackingField: 1
+  <MinDirX>k__BackingField: -1
+  <MaxDirY>k__BackingField: 1
+  <MinDirY>k__BackingField: -1
+  <MinSpawnDistance>k__BackingField: 5
+  <MaxSpawnDistance>k__BackingField: 10
+  <SpawnTimestep>k__BackingField: 0.5
+  <WaveTimer>k__BackingField: 30
+  <BreakBetweenWavesTimer>k__BackingField: 5

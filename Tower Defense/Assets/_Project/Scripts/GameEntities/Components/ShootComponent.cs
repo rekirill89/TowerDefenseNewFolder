@@ -8,18 +8,17 @@ namespace _Project.Scripts
 {
     public class ShootComponent
     {
+        private const float NO_ENEMIES_CHECK_TIMER = 0.1f;
         private readonly ProjectileSO _projectileSO;
         private readonly AttackStructureSO _attackStructureSO;
         private readonly Transform _rootTransform;
         private readonly ObjectPool<Projectile> _projectilePool;
-        private readonly float _noEnemiesCheckTimer = 0.1f;
         private readonly List<Projectile> _projectiles = new List<Projectile>(); 
 
         private Enemy _target; 
         private int _damage;
+        private float _attackRateTimer;
         
-        private float _attackRateTimer = 0.5f;
-
         public ShootComponent(
             Projectile projectilePrefab, 
             Transform rootTransform,
@@ -47,7 +46,7 @@ namespace _Project.Scripts
                     await UniTask.WaitForSeconds(_attackRateTimer, cancellationToken: cts.Token);
                 }
                 else
-                    await UniTask.WaitForSeconds(_noEnemiesCheckTimer, cancellationToken: cts.Token);
+                    await UniTask.WaitForSeconds(NO_ENEMIES_CHECK_TIMER, cancellationToken: cts.Token);
             }
         }
 

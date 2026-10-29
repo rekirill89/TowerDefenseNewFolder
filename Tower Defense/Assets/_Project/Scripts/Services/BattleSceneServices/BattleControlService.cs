@@ -11,6 +11,7 @@ namespace _Project.Scripts
 
         private readonly IWavesControlService _wavesControlService;
         private readonly Stronghold _stronghold;
+        private readonly StrongholdHealthSO _strongholdHealthSO;
         private readonly IEnemySpawnService _enemySpawnService;
         private readonly IStructureConstructService _structureConstructService;
         private readonly ICoinsWallet _coinsWallet;
@@ -27,7 +28,8 @@ namespace _Project.Scripts
             ICoinsWallet coinsWallet,
             IUpgradeStructureService upgradeStructureService,
             IBattleInfoService battleInfoService,
-            Stronghold stronghold)
+            Stronghold stronghold,
+            StrongholdHealthSO strongholdHealthSO)
         {
             _wavesControlService = wavesControlService;
             _enemySpawnService = enemySpawnService;
@@ -36,6 +38,7 @@ namespace _Project.Scripts
             _upgradeStructureService = upgradeStructureService;
             _battleInfoService = battleInfoService;
             _stronghold = stronghold;
+            _strongholdHealthSO = strongholdHealthSO;
         }
 
         public void Dispose()
@@ -52,9 +55,10 @@ namespace _Project.Scripts
         public void StartBattle()
         {
             Debug.Log("Battle Started");
+            _stronghold.Init(_strongholdHealthSO);
             _state = BattleState.InProgress;
             _stronghold.StartActing();
-            _wavesControlService.RunWaveLoopAsync().Forget();
+            _wavesControlService.RunWavesLoopAsync().Forget();
         }
 
         public void RestartBattle()

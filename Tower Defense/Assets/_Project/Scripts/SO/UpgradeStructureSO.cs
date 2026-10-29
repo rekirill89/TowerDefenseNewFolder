@@ -4,7 +4,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "UpgradeStructureSO", menuName = "Scriptable Objects/UpgradeStructureSO")]
 public class UpgradeStructureSO : ScriptableObject
 {
-    [Header("Upgrades values")]
+    [field:Header("Upgrades values")]
     [field:SerializeField] public UpgradeUnit DamageUpgradeUnit { get; private set; }
     [field:SerializeField] public UpgradeUnit AttackRateUpgradeUnit { get; private set; }
     [field:SerializeField] public UpgradeUnit HealthUpgradeUnit { get; private set; }
@@ -21,6 +21,6 @@ public class UpgradeUnit
     public void NextLevel()
     {
         ValuePerLevel += ValuePerLevel * (MultiplierP / 100);
-        CostPerLevel += (int)(CostPerLevel * (MultiplierP / 100));
+        CostPerLevel += (int)(CostPerLevel * (CostMultiplierP / 100));
     }
 }

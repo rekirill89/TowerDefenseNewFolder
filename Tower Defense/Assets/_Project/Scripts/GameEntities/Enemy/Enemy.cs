@@ -19,9 +19,8 @@ namespace _Project.Scripts
 
         public HealthComponent HealthComponent { get; private set; }
 
-        private readonly int _dealingDamage = 10;
-        private readonly float _attackSpeed = 0.5f;
-        private readonly int _maxDefaultHealth = 30;
+        private int _dealingDamage;
+        private float _attackRate;
 
         private MoveComponent _moveComponent;
         private Vector2 _target;
@@ -36,8 +35,8 @@ namespace _Project.Scripts
         private void Awake()
         {
             _rb = GetComponent<Rigidbody2D>();
-            _moveComponent = new MoveComponent(_rb, 2f);
-            HealthComponent = new HealthComponent(_maxDefaultHealth);
+            _moveComponent = new MoveComponent(_rb);
+            HealthComponent = new HealthComponent();
 
             HealthComponent.OnHealthZero += OnHealthZeroHandler;
         }
@@ -64,7 +63,8 @@ namespace _Project.Scripts
             if (!_isActing)
                 return;
 
-            RotateToTarget();
+            _moveComponent.RotateTo(_target);
+            //RotateToTarget();
         }
 
 
@@ -105,10 +105,15 @@ namespace _Project.Scripts
             }
         }
 
-        public void Init(Vector2 position, Action<Enemy> returnDelegate)
+        public void Init(Vector2 position, Action<Enemy> returnDelegate, EnemySO enemySO)
         {
             transform.position = position;
             _returnDelegate = returnDelegate;
+            
+            _moveComponent.Init(enemySO.Speed);
+            HealthComponent.Init(enemySO.MaxHealth);
+            _dealingDamage = enemySO.Damage;
+            _attackRate = enemySO.AttackRate;
 
             ChangeMoveStatus(true);
             _isActing = true;
@@ -165,7 +170,7 @@ namespace _Project.Scripts
                 target.TakeDamage(_dealingDamage);
 
                 OnTargetAttack?.Invoke();
-                await UniTask.WaitForSeconds(_attackSpeed, cancellationToken: _cts.Token);
+                await UniTask.WaitForSeconds(_attackRate, cancellationToken: _cts.Token);
             }
         }
     }

@@ -23,19 +23,19 @@ namespace _Project.Scripts.MVP
         private readonly DisposableCollector _disposableCollector = new DisposableCollector();
 
         public MediatorPresenter(
-            IBattleControlService battleControlService, 
-            IEnemySpawnService enemySpawnService,
-            IWavesControlService wavesControlService,
-            ScreenInputHandler screenInputHandler,
-            IStructureConstructService structureConstructService,
-            ICoinsWallet coinsWallet,
-            IUpgradeStructureService upgradeStructureService,
-            ISceneLoaderService sceneLoaderService,
             BattleStartPanelView battleStartPanelView,
             InfoPanelView infoPanelView,
             ChoseActionPanelView choseActionPanelView,
             UpgradeStructurePanelView upgradeStructurePanelView,
-            EndGamePanelView endGamePanelView)
+            EndGamePanelView endGamePanelView,
+            ScreenInputHandler screenInputHandler,
+            IBattleControlService battleControlService, 
+            IEnemySpawnService enemySpawnService,
+            IWavesControlService wavesControlService,
+            IStructureConstructService structureConstructService,
+            ICoinsWallet coinsWallet,
+            IUpgradeStructureService upgradeStructureService,
+            ISceneLoaderService sceneLoaderService)
         {
             _battleControlService = battleControlService;
             _enemySpawnService = enemySpawnService;

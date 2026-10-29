@@ -8,9 +8,9 @@ namespace _Project.Scripts
         public event Action<int> OnBalanceChanged;
         public int CurrentBalance { get; private set; }
 
-        public MetaCurrencyWallet(int currentBalance)
+        public MetaCurrencyWallet()
         {
-            CurrentBalance = currentBalance;
+            CurrentBalance = 0;
         }
 
         public void SetCurrentBalance(int value)

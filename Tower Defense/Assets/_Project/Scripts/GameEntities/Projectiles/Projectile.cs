@@ -55,7 +55,8 @@ namespace _Project.Scripts
             _speed = projectileSO.Speed;
             _damage = damage == -1 ? projectileSO.DefaultDamage : damage;
             
-            _moveComponent = new MoveComponent(_rb, _speed);
+            _moveComponent = new MoveComponent(_rb);
+            _moveComponent.Init(_speed);
         }
 
         private void DealDamage(IDamageable target)

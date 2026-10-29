@@ -10,14 +10,13 @@ namespace _Project.Scripts
     
         public int CurrentHealth { get; private set; }
         public int MaxHealth { get; private set; }
-        private readonly int _maxInitDefaultHealth;
+        private  int _maxInitDefaultHealth;
 
-        public HealthComponent(int maxDefaultHealth, int currentHealth = -1)
+        public void Init(int maxDefaultHealth)
         {
             _maxInitDefaultHealth = maxDefaultHealth;
             MaxHealth = _maxInitDefaultHealth;
-
-            CurrentHealth = currentHealth == -1 ? MaxHealth : currentHealth;
+            CurrentHealth = MaxHealth;
         }
     
         public void ChangeHealthByValue(int value)

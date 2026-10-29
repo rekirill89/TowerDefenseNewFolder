@@ -1,5 +1,6 @@
 using System;
 using System.Threading;
+using _Project.Scripts;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -8,32 +9,25 @@ public class WavesControlService : IWavesControlService
 {
     public event NewWaveStarted OnNewWaveStarted; 
     public event Action<int> OnTimerIncremented;
-
-    private int _totalEnemyAmountPerWave = 0;
-
+    
+    private readonly WavesSO _wavesSO;
     private readonly IEnemySpawnService _enemySpawnService;
-
-    private readonly float _maxDirX = 1f;
-    private readonly float _maxDirY = 1f;
-
-    private readonly float _spawnInitTimestep = 0.5f; 
-    private readonly float _waveMaxTimer = 10f;
-    private readonly float _minSpawnDistance = 5;
-    private readonly float _maxSpawnDistance = 10;
-    private readonly float _breakBetweenWavesTimer = 3f;
+    
+    private int _totalEnemyAmountPerWave = 0;
     private float _spawnTimestep; 
-    private float _waveCurrentTimer = 0;
-    private int _waveCurrentIndex = 0;
+    private float _waveCurrentTimer;
+    private int _waveCurrentIndex;
 
     private bool _isWaveFinished = false;
     private bool _stopWaveFlag = false;
     
     private CancellationTokenSource _cts = new CancellationTokenSource();
 
-    public WavesControlService(IEnemySpawnService enemySpawnService)
+    public WavesControlService(WavesSO wavesSO, IEnemySpawnService enemySpawnService)
     {
+        _wavesSO = wavesSO;
         _enemySpawnService = enemySpawnService;
-        _spawnTimestep = _spawnInitTimestep;
+        _spawnTimestep = _wavesSO.SpawnTimestep;
     }
 
     public void Dispose()
@@ -42,13 +36,13 @@ public class WavesControlService : IWavesControlService
         _cts.Dispose();
     }
 
-    public async UniTask RunWaveLoopAsync()
+    public async UniTask RunWavesLoopAsync()
     {
         while (!_cts.IsCancellationRequested)
         {
             StartWaveAsync().Forget();
             await UniTask.WaitUntil(() => _isWaveFinished, cancellationToken: _cts.Token);
-            await UniTask.WaitForSeconds(_breakBetweenWavesTimer, cancellationToken: _cts.Token);
+            await UniTask.WaitForSeconds(_wavesSO.BreakBetweenWavesTimer, cancellationToken: _cts.Token);
         }    
     }
 
@@ -62,7 +56,7 @@ public class WavesControlService : IWavesControlService
     {
         _cts.Cancel();
         _cts = new CancellationTokenSource();
-        _spawnTimestep = _spawnInitTimestep;
+        _spawnTimestep = _wavesSO.SpawnTimestep;
         _waveCurrentIndex = 0;
         _waveCurrentTimer = 0;
     }
@@ -73,15 +67,17 @@ public class WavesControlService : IWavesControlService
         StartWaveTimerAsync().Forget();
 
         _waveCurrentIndex++;
-        _spawnTimestep -= (_spawnTimestep * (_waveCurrentIndex * 0.1f));
-        _totalEnemyAmountPerWave = (int)(_waveMaxTimer / _spawnTimestep);
+        //_spawnTimestep -= (_wavesSO.SpawnTimestep * (_waveCurrentIndex * 0.1f));
+        _spawnTimestep -= (_spawnTimestep * _wavesSO.DecreaseSpawnTimestepMultiplier);
+        _totalEnemyAmountPerWave = (int)(_wavesSO.WaveTimer / _spawnTimestep);
         OnNewWaveStarted?.Invoke(_waveCurrentIndex, _totalEnemyAmountPerWave);
         
         while (!_cts.IsCancellationRequested && !_stopWaveFlag)
         {
-            var dirX = Random.Range(-_maxDirX, _maxDirX);
-            var dirY = Random.Range(-_maxDirY, _maxDirY);
-            var pos = new Vector2(dirX, dirY).normalized * Random.Range(_minSpawnDistance, _maxSpawnDistance);
+            var dirX = Random.Range(_wavesSO.MinDirX, _wavesSO.MaxDirX);
+            var dirY = Random.Range(_wavesSO.MinDirY, _wavesSO.MaxDirY);
+            var pos = new Vector2(dirX, dirY)
+                .normalized * Random.Range(_wavesSO.MinSpawnDistance, _wavesSO.MaxSpawnDistance);
             
             _enemySpawnService.SpawnEnemy(pos);
 
@@ -99,7 +95,7 @@ public class WavesControlService : IWavesControlService
         int currentSecond = 0;
         int lastReportedSecond = 0;
         
-        while (_waveCurrentTimer < _waveMaxTimer && !_cts.IsCancellationRequested)
+        while (_waveCurrentTimer < _wavesSO.WaveTimer && !_cts.IsCancellationRequested)
         {
             await UniTask.Yield(PlayerLoopTiming.Update, cancellationToken: _cts.Token);
             _waveCurrentTimer += Time.deltaTime;

@@ -7,7 +7,7 @@ namespace _Project.Scripts
     [RequireComponent(typeof(Collider2D))]
     public class EnemyDetector : MonoBehaviour
     {
-        [SerializeField] private float _detectRadius = 4;
+        private float _detectRadius;
         
         public List<Enemy> Enemies { get; private set; }
         private CircleCollider2D _circleCollider2D;

@@ -8,7 +8,7 @@ public interface IWavesControlService : IDisposable
     event NewWaveStarted OnNewWaveStarted;
     event Action<int> OnTimerIncremented;
 
-    UniTask RunWaveLoopAsync();
+    UniTask RunWavesLoopAsync();
     void StopWave();
     void Reset();
 }

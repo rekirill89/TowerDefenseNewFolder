@@ -14,7 +14,7 @@ namespace _Project.Scripts
         private readonly List<BaseTower> _constructedTowers;
         private readonly Dictionary<StructureEnum, BaseTower> _baseTowersDic;
         
-        public StructureConstructService(ICoinsWallet coinsWallet, Archer archerPrefab, Cannon cannonPrefab)
+        public StructureConstructService(Archer archerPrefab, Cannon cannonPrefab, ICoinsWallet coinsWallet)
         {
             _coinsWallet = coinsWallet;
             _constructedTowers = new List<BaseTower>();

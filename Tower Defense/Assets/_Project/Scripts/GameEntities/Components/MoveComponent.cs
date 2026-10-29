@@ -5,11 +5,15 @@ namespace _Project.Scripts
     public class MoveComponent
     {
         private readonly Rigidbody2D _rb;
-        private readonly float _speed;
+        private float _speed;
 
-        public MoveComponent(Rigidbody2D rb, float speed = 10)
+        public MoveComponent(Rigidbody2D rb)
         {
             _rb = rb;
+        }
+
+        public void Init(float speed)
+        {
             _speed = speed;
         }
 

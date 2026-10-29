@@ -1,5 +1,6 @@
 ﻿using System;
 using _Project.Scripts.MVP;
+using Zenject;
 
 namespace _Project.Scripts.MVP
 {
@@ -42,6 +43,5 @@ namespace _Project.Scripts.MVP
         {
             _sceneLoaderService.LoadBattleScene();
         }
-
     }
 }

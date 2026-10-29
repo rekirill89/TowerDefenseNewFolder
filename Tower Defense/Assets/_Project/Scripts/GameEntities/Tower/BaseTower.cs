@@ -9,10 +9,10 @@ namespace _Project.Scripts
 {
     public class BaseTower : MonoBehaviour
     {
+        [field: SerializeField] public AttackStructureSO AttackStructureSo { get;private set; }
         [SerializeField] private EnemyDetector _enemyDetector;
         [SerializeField] private Projectile _projectilePrefab;
         [SerializeField] private ProjectileSO _projectileSO;
-        [field: SerializeField] public AttackStructureSO AttackStructureSo { get;private set; }
         public ShootComponent ShootComponent {get; private set;}
         protected  CancellationTokenSource Cts = new CancellationTokenSource();
         private Enemy _closestEnemy;

@@ -10,20 +10,20 @@ namespace _Project.Scripts
     {
         public event Action OnDestroyed;
         public HealthComponent HealthComponent {  get; private set; }
-        
-        private readonly int _maxHealth = 200;
-        private readonly float _takeDamageDefaultTimer = 0.3f;
+
+        private int _maxHealth;
+        private float _takeDamageDefaultTimer;
+        private float _takeDamageTimer;
+        private bool _isActing = false;
         
         private Collider2D _collider;
-
-        private float _takeDamageTimer = 0f;
-        private bool _isActing = false;
         
         protected override void Awake()
         {
             base.Awake();
             _collider = GetComponent<Collider2D>();
-            HealthComponent = new HealthComponent(_maxHealth);
+            HealthComponent = new HealthComponent();
+            HealthComponent.Init(_maxHealth);
             HealthComponent.OnHealthZero += OnHealthZeroHandler;
         }
 
@@ -44,6 +44,12 @@ namespace _Project.Scripts
         {
             HealthComponent.OnHealthZero -= OnHealthZeroHandler;
             Cts.Cancel();
+        }
+
+        public void Init(StrongholdHealthSO strongholdHealthSO)
+        {
+            HealthComponent.Init(strongholdHealthSO.MaxHealth);
+            _takeDamageDefaultTimer = strongholdHealthSO.TakeDamageTimer;
         }
         
         public void StartActing()
@@ -84,19 +90,5 @@ namespace _Project.Scripts
             Cts.Cancel();
             OnDestroyed?.Invoke();
         }
-
-
-        /*private void CheckTargets()
-        {
-            if (_enemyDetector.Enemies.Count == 0)
-            {
-                _closestEnemy =  null;
-                ShootComponent.SetTarget(_closestEnemy);
-                return;
-            }
-            
-            _closestEnemy = _enemyDetector.GetClosestEnemy();
-            ShootComponent.SetTarget(_closestEnemy);
-        }*/
     }
 }

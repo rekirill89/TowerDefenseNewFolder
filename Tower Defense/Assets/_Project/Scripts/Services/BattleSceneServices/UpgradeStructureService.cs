@@ -16,9 +16,9 @@ namespace _Project.Scripts
         private UpgradeStructureSO _upgradeStrongholdSoCopy;
         
         public UpgradeStructureService(
-            ICoinsWallet coinsWallet, 
             Stronghold stronghold, 
-            UpgradeStructureSO upgradeStrongholdSo)
+            UpgradeStructureSO upgradeStrongholdSo,
+            ICoinsWallet coinsWallet)
         {
             _coinsWallet = coinsWallet;
             _stronghold = stronghold;
@@ -44,7 +44,7 @@ namespace _Project.Scripts
             _upgradeStrongholdSoCopy = Object.Instantiate(_upgradeStrongholdSo);
         }
         
-        private void TryUpgradeDamage(int extraDamage = -1)
+        private void TryUpgradeDamage()
         {
             if(!_coinsWallet.TrySpend(_upgradeStrongholdSoCopy.DamageUpgradeUnit.CostPerLevel)) 
                 return;
@@ -52,7 +52,7 @@ namespace _Project.Scripts
             _upgradeStrongholdSoCopy.DamageUpgradeUnit.NextLevel();
         }
         
-        private void TryUpgradeAttackRate(int extraRatePercent = -1)
+        private void TryUpgradeAttackRate()
         {
             if(!_coinsWallet.TrySpend(_upgradeStrongholdSoCopy.AttackRateUpgradeUnit.CostPerLevel)) 
                 return;
@@ -60,7 +60,7 @@ namespace _Project.Scripts
             _upgradeStrongholdSoCopy.AttackRateUpgradeUnit.NextLevel();
         }
         
-        private void TryUpgradeHealth(int extraHealth = -1)
+        private void TryUpgradeHealth()
         {
            if(!_coinsWallet.TrySpend(_upgradeStrongholdSoCopy.HealthUpgradeUnit.CostPerLevel)) 
                return;

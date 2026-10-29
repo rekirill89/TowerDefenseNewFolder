@@ -12,11 +12,13 @@ public class EnemySpawnService : IEnemySpawnService
     
     private readonly List<Enemy> _enemies;
     private readonly Stronghold _stronghold;
+    private readonly EnemySO _enemySo;
     private readonly ObjectPool<Enemy> _objectPool;
 
-    public EnemySpawnService(Enemy enemyPrefab, Stronghold stronghold)
+    public EnemySpawnService(Enemy enemyPrefab, Stronghold stronghold, EnemySO enemySo)
     {
         _stronghold = stronghold;
+        _enemySo = enemySo;
         _objectPool = new ObjectPool<Enemy>(enemyPrefab);
 
         _enemies = new List<Enemy>();
@@ -33,7 +35,7 @@ public class EnemySpawnService : IEnemySpawnService
     public void SpawnEnemy(Vector2 position = default)
     {
         var enemy = _objectPool.Get(); 
-        enemy.Init(position, _objectPool.Return);
+        enemy.Init(position, _objectPool.Return, _enemySo);
         enemy.SetTarget(_stronghold.transform.position);
         
         _enemies.Add(enemy);
