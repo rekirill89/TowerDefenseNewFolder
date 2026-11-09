@@ -1,35 +1,35 @@
 ﻿using System;
 using System.Collections.Generic;
-using UnityEngine;
 using Object = UnityEngine.Object;
 namespace _Project.Scripts
 {
     public class UpgradeStructureService : IUpgradeStructureService
     {
         public event Action OnStructUpgraded;
-        
-        private readonly UpgradeStructureSO _upgradeStrongholdSo;
-        private readonly Dictionary<UpgradeStructureEnum, Action> _dic;
-        private readonly Stronghold _stronghold;
-        private readonly ICoinsWallet _coinsWallet;
 
-        private UpgradeStructureSO _upgradeStrongholdSoCopy;
-        
-        public UpgradeStructureService(
-            Stronghold stronghold, 
-            UpgradeStructureSO upgradeStrongholdSo,
-            ICoinsWallet coinsWallet)
+        private readonly UpgradeStructureConfig _strongholdUpgradeConfig;
+        private readonly Dictionary<UpgradeStructureEnum, Action> _dic;
+        private readonly ICoinsWallet _coinsWallet;
+        private Stronghold _stronghold;
+
+        private UpgradeStructureConfig _strongholdUpgradeConfigCopy;
+
+        public UpgradeStructureService(ConfigProvider configProvider, ICoinsWallet coinsWallet)
         {
             _coinsWallet = coinsWallet;
-            _stronghold = stronghold;
-            _upgradeStrongholdSo = upgradeStrongholdSo;
-            _upgradeStrongholdSoCopy = Object.Instantiate(_upgradeStrongholdSo);
+            _strongholdUpgradeConfig = configProvider.GetConfig<UpgradeStructureConfig>();
+            _strongholdUpgradeConfigCopy = Object.Instantiate(_strongholdUpgradeConfig);
             _dic = new Dictionary<UpgradeStructureEnum, Action>()
             {
                 { UpgradeStructureEnum.Damage, () => TryUpgradeDamage() },
                 { UpgradeStructureEnum.AttackRate, () => TryUpgradeAttackRate() },
                 { UpgradeStructureEnum.Health, () => TryUpgradeHealth() }
             };
+        }
+
+        public void SetStronghold(Stronghold stronghold)
+        {
+            _stronghold = stronghold;
         }
 
         public void UpgradeStruct(UpgradeStructureEnum upgradeEnum)
@@ -40,32 +40,32 @@ namespace _Project.Scripts
 
         public void ResetUpgradeStats()
         {
-            Object.Destroy(_upgradeStrongholdSoCopy);
-            _upgradeStrongholdSoCopy = Object.Instantiate(_upgradeStrongholdSo);
+            Object.Destroy(_strongholdUpgradeConfigCopy);
+            _strongholdUpgradeConfigCopy = Object.Instantiate(_strongholdUpgradeConfig);
         }
-        
+
         private void TryUpgradeDamage()
         {
-            if(!_coinsWallet.TrySpend(_upgradeStrongholdSoCopy.DamageUpgradeUnit.CostPerLevel)) 
+            if(!_coinsWallet.TrySpend(_strongholdUpgradeConfigCopy.DamageUpgradeUnit.CostPerLevel))
                 return;
-            _stronghold.ShootComponent.UpgradeDamage((int)_upgradeStrongholdSoCopy.DamageUpgradeUnit.ValuePerLevel);
-            _upgradeStrongholdSoCopy.DamageUpgradeUnit.NextLevel();
+            _stronghold.ShootComponent.UpgradeDamage((int)_strongholdUpgradeConfigCopy.DamageUpgradeUnit.ValuePerLevel);
+            _strongholdUpgradeConfigCopy.DamageUpgradeUnit.NextLevel();
         }
-        
+
         private void TryUpgradeAttackRate()
         {
-            if(!_coinsWallet.TrySpend(_upgradeStrongholdSoCopy.AttackRateUpgradeUnit.CostPerLevel)) 
+            if(!_coinsWallet.TrySpend(_strongholdUpgradeConfigCopy.AttackRateUpgradeUnit.CostPerLevel))
                 return;
-            _stronghold.ShootComponent.UpgradeAttackRate((int)_upgradeStrongholdSoCopy.AttackRateUpgradeUnit.ValuePerLevel);
-            _upgradeStrongholdSoCopy.AttackRateUpgradeUnit.NextLevel();
+            _stronghold.ShootComponent.UpgradeAttackRate((int)_strongholdUpgradeConfigCopy.AttackRateUpgradeUnit.ValuePerLevel);
+            _strongholdUpgradeConfigCopy.AttackRateUpgradeUnit.NextLevel();
         }
-        
+
         private void TryUpgradeHealth()
         {
-           if(!_coinsWallet.TrySpend(_upgradeStrongholdSoCopy.HealthUpgradeUnit.CostPerLevel)) 
+           if(!_coinsWallet.TrySpend(_strongholdUpgradeConfigCopy.HealthUpgradeUnit.CostPerLevel))
                return;
-           _stronghold.HealthComponent.IncreaseHealth((int)_upgradeStrongholdSoCopy.HealthUpgradeUnit.ValuePerLevel);
-           _upgradeStrongholdSoCopy.HealthUpgradeUnit.NextLevel();
+           _stronghold.HealthComponent.IncreaseHealth((int)_strongholdUpgradeConfigCopy.HealthUpgradeUnit.ValuePerLevel);
+           _strongholdUpgradeConfigCopy.HealthUpgradeUnit.NextLevel();
         }
     }
 

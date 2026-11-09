@@ -1,38 +1,20 @@
-﻿using System;
 using System.Threading;
-using _Project.Scripts;
-using Cysharp.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.Serialization;
+using Zenject;
 
 namespace _Project.Scripts
 {
-    public class BaseTower : MonoBehaviour
+    public abstract class BaseTower : GameEntity<TowerConfig>
     {
-        [field: SerializeField] public AttackStructureSO AttackStructureSo { get;private set; }
         [SerializeField] private EnemyDetector _enemyDetector;
-        [SerializeField] private Projectile _projectilePrefab;
-        [SerializeField] private ProjectileSO _projectileSO;
         public ShootComponent ShootComponent {get; private set;}
-        protected  CancellationTokenSource Cts = new CancellationTokenSource();
-        private Enemy _closestEnemy;
-        
-        public void StopActing() => Cts.Cancel();
-        
-        protected virtual void Awake()
-        {
-            ShootComponent = new ShootComponent(
-                _projectilePrefab, 
-                transform, 
-                _closestEnemy, 
-                _projectileSO,
-                AttackStructureSo);
-        }
+        protected CancellationTokenSource Cts = new CancellationTokenSource();
+        private IPoolProvider _poolProvider;
 
-        protected virtual void Start()
-        {
-            _enemyDetector.Init(AttackStructureSo.AttackRange);
-        }
+        public void StopActing() => Cts.Cancel();
+
+        [Inject]
+        private void Construct(IPoolProvider poolProvider) => _poolProvider = poolProvider;
 
         protected virtual void Update()
         {
@@ -43,18 +25,18 @@ namespace _Project.Scripts
         {
             Cts.Cancel();
         }
-        
+
+        protected abstract ObjectPool<Projectile> GetProjectilePool(IPoolProvider poolProvider);
+
         protected void CheckTargets()
         {
-            if (_enemyDetector.Enemies.Count == 0)
-            {
-                _closestEnemy =  null;
-                ShootComponent.SetTarget(_closestEnemy);
-                return;
-            }
-            
-            _closestEnemy = _enemyDetector.GetClosestEnemy();
-            ShootComponent.SetTarget(_closestEnemy);
+            ShootComponent.SetTarget(_enemyDetector.GetClosestEnemy());
+        }
+
+        protected override void OnInit(TowerConfig config)
+        {
+            ShootComponent = new ShootComponent(GetProjectilePool(_poolProvider), transform, config);
+            _enemyDetector.Init(config.AttackRange);
         }
     }
 }

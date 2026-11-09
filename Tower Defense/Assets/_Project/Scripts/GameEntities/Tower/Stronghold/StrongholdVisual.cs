@@ -1,7 +1,5 @@
-﻿using System;
-using DG.Tweening;
+using System;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace _Project.Scripts
@@ -14,6 +12,7 @@ namespace _Project.Scripts
         private void Start()
         {
             _stronghold.HealthComponent.OnHealthChanged += OnHealthChangedHandler;
+            OnHealthChangedHandler();
         }
 
         private void OnDestroy()

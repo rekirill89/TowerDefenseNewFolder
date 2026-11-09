@@ -11,7 +11,8 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b980082ac9724a32a05daea43ae79452, type: 3}
   m_Name: Cannon
-  m_EditorClassIdentifier: Assembly-CSharp::AttackStructureSO
+  m_EditorClassIdentifier: Assembly-CSharp::_Project.Scripts.TowerConfig
+  <Prefab>k__BackingField: {fileID: 1418308015570212324, guid: b9535eb7b38e92e49971352a787fd206, type: 3}
   <AttackTimer>k__BackingField: 2
   <AttackRange>k__BackingField: 10
   <AttackDamage>k__BackingField: 50

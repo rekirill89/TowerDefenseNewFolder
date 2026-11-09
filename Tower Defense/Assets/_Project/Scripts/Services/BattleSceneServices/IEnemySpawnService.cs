@@ -11,6 +11,7 @@ public interface IEnemySpawnService : IDisposable
     event Action OnEnemyKilled;
     event EnemySpawned OnEnemySpawned;
 
+    void SetEnemiesTarget(Vector2 target);
     void SpawnEnemy(Vector2 position = default);
     void StopAllEnemies();
     void RemoveAllEnemies();

@@ -1,7 +1,4 @@
-using System;
-using System.Collections.Generic;
 using _Project.Scripts.MVP;
-using UnityEngine;
 using Zenject;
 
 namespace _Project.Scripts
@@ -15,7 +12,7 @@ namespace _Project.Scripts
         private readonly MediatorPresenter _mediatorPresenter;
 
         public BattleSceneBootstrap(
-            IBattleControlService battleControlService, 
+            IBattleControlService battleControlService,
             IRewardService rewardService,
             MediatorPresenter mediatorPresenter,
             BattleInfoService battleInfoService)

@@ -10,9 +10,9 @@ namespace _Project.Scripts
 
         private readonly int _initCoinsBalance = 0;
 
-        public CoinsWallet(RewardsSO rewardsSO)
+        public CoinsWallet(ConfigProvider configProvider)
         {
-            _initCoinsBalance = rewardsSO.InitCoinsValue;
+            _initCoinsBalance = configProvider.GetConfig<RewardsConfig>().InitCoinsValue;
             Collect(_initCoinsBalance);
         }
         

@@ -10,8 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7e89b3c021744de780528f4ace32f2eb, type: 3}
-  m_Name: WavesSO
-  m_EditorClassIdentifier: Assembly-CSharp::_Project.Scripts.WavesSO
+  m_Name: WavesConfig
+  m_EditorClassIdentifier: Assembly-CSharp::_Project.Scripts.WavesConfig
   <MaxDirX>k__BackingField: 1
   <MinDirX>k__BackingField: -1
   <MaxDirY>k__BackingField: 1

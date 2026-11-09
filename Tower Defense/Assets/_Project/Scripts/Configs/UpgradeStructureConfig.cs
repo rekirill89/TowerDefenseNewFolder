@@ -1,8 +1,9 @@
 using System;
+using _Project.Scripts;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "UpgradeStructureSO", menuName = "Scriptable Objects/UpgradeStructureSO")]
-public class UpgradeStructureSO : ScriptableObject
+[CreateAssetMenu(fileName = "UpgradeStructureConfig", menuName = "Configs/UpgradeStructureConfig")]
+public class UpgradeStructureConfig : BaseConfig
 {
     [field:Header("Upgrades values")]
     [field:SerializeField] public UpgradeUnit DamageUpgradeUnit { get; private set; }

@@ -1,9 +1,9 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 namespace _Project.Scripts
 {
-    [CreateAssetMenu(fileName = "RewardsSO", menuName = "Scriptable Objects/RewardsSO")]
-    public class RewardsSO :  ScriptableObject
+    [CreateAssetMenu(fileName = "RewardsConfig", menuName = "Configs/RewardsConfig")]
+    public class RewardsConfig : BaseConfig
     {
         [field:SerializeField] public int InitCoinsValue {get; private set;}
         [field:SerializeField] public int CoinsPerEnemy {get; private set;}

@@ -3,8 +3,8 @@ using UnityEngine.Serialization;
 
 namespace _Project.Scripts
 {
-    [CreateAssetMenu(fileName = "WavesSO", menuName = "Scriptable Objects/WavesSO")]
-    public class WavesSO : ScriptableObject
+    [CreateAssetMenu(fileName = "WavesConfig", menuName = "Configs/WavesConfig")]
+    public class WavesConfig : BaseConfig
     {
         [field:Header("Spawn direction and distance")]
         [field:SerializeField] public float MaxDirX { get; private set; }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
@@ -10,20 +10,18 @@ namespace _Project.Scripts
     {
         public event Action OnDestroyed;
         public HealthComponent HealthComponent {  get; private set; }
+        public override Type ConfigType => typeof(StrongholdConfig);
 
-        private int _maxHealth;
         private float _takeDamageDefaultTimer;
         private float _takeDamageTimer;
         private bool _isActing = false;
         
         private Collider2D _collider;
-        
-        protected override void Awake()
+
+        private void Awake()
         {
-            base.Awake();
             _collider = GetComponent<Collider2D>();
             HealthComponent = new HealthComponent();
-            HealthComponent.Init(_maxHealth);
             HealthComponent.OnHealthZero += OnHealthZeroHandler;
         }
 
@@ -43,13 +41,7 @@ namespace _Project.Scripts
         protected override void OnDestroy()
         {
             HealthComponent.OnHealthZero -= OnHealthZeroHandler;
-            Cts.Cancel();
-        }
-
-        public void Init(StrongholdHealthSO strongholdHealthSO)
-        {
-            HealthComponent.Init(strongholdHealthSO.MaxHealth);
-            _takeDamageDefaultTimer = strongholdHealthSO.TakeDamageTimer;
+            base.OnDestroy();
         }
         
         public void StartActing()
@@ -67,7 +59,7 @@ namespace _Project.Scripts
             }
         }
 
-        public void Reset()
+        public void ResetState()
         {
             Cts.Cancel();
             Cts = new CancellationTokenSource();
@@ -75,6 +67,18 @@ namespace _Project.Scripts
             _collider.enabled = true;
             ResetStats();
         }
+
+        protected override void OnInit(TowerConfig config)
+        {
+            base.OnInit(config);
+
+            var strongholdConfig = (StrongholdConfig)config;
+            _takeDamageDefaultTimer = strongholdConfig.TakeDamageTimer;
+            HealthComponent.Init(strongholdConfig.MaxHealth);
+        }
+
+        protected override ObjectPool<Projectile> GetProjectilePool(IPoolProvider poolProvider) =>
+            poolProvider.Get<Projectile, Arrow>();
 
         private void ResetStats()
         {

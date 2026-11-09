@@ -1,96 +1,80 @@
 ﻿using System;
 using System.Collections.Generic;
-using _Project.Scripts.MVP;
+using UnityEngine;
+using Zenject;
 
 namespace _Project.Scripts.MVP
 {
     public class MediatorPresenter : IDisposable
     {
+        private readonly IInstantiator _instantiator;
         private readonly IBattleControlService _battleControlService;
-        private readonly IEnemySpawnService _enemySpawnService;
-        private readonly IWavesControlService _wavesControlService;
-        private readonly IStructureConstructService _structureConstructService;
-        private readonly ICoinsWallet _coinsWallet;
-        private readonly IUpgradeStructureService _upgradeStructureService;
-        private readonly ISceneLoaderService _sceneLoaderService;
-        private readonly ScreenInputHandler _screenInputHandler;
         private readonly BattleStartPanelView _battleStartPanelView;
         private readonly InfoPanelView _infoPanelView;
         private readonly ChoseActionPanelView _choseActionPanelView;
-        private readonly UpgradeStructurePanelView _upgradeStructurePanelView;
         private readonly EndGamePanelView _endGamePanelView;
 
         private readonly DisposableCollector _disposableCollector = new DisposableCollector();
 
         public MediatorPresenter(
+            IInstantiator instantiator,
+            IBattleControlService battleControlService,
             BattleStartPanelView battleStartPanelView,
             InfoPanelView infoPanelView,
             ChoseActionPanelView choseActionPanelView,
-            UpgradeStructurePanelView upgradeStructurePanelView,
-            EndGamePanelView endGamePanelView,
-            ScreenInputHandler screenInputHandler,
-            IBattleControlService battleControlService, 
-            IEnemySpawnService enemySpawnService,
-            IWavesControlService wavesControlService,
-            IStructureConstructService structureConstructService,
-            ICoinsWallet coinsWallet,
-            IUpgradeStructureService upgradeStructureService,
-            ISceneLoaderService sceneLoaderService)
+            EndGamePanelView endGamePanelView)
         {
+            _instantiator = instantiator;
             _battleControlService = battleControlService;
-            _enemySpawnService = enemySpawnService;
-            _wavesControlService = wavesControlService;
-            _screenInputHandler = screenInputHandler;
-            _structureConstructService = structureConstructService;
-            _coinsWallet = coinsWallet;
-            _upgradeStructureService = upgradeStructureService;
-            _sceneLoaderService = sceneLoaderService;
 
             _battleStartPanelView = battleStartPanelView;
             _infoPanelView = infoPanelView;
             _choseActionPanelView =  choseActionPanelView;
-            _upgradeStructurePanelView = upgradeStructurePanelView;
             _endGamePanelView = endGamePanelView;
         }
 
         public void Dispose()
         {
+            _battleControlService.OnStrongholdCreated -= OnStrongholdCreatedHandler;
             _disposableCollector.Dispose();
         }
 
         public void Init()
         {
-            var infoPanelPresenter = new InfoPanelPresenter(
-                _infoPanelView,
-                _battleControlService,
-                _enemySpawnService,
-                _wavesControlService,
-                _coinsWallet);
-            var battleControllerPresenter = new BattleControllerPresenter(_battleStartPanelView, _battleControlService);
-            var choseActionPresenter = new ChoseActionPresenter(
-                _choseActionPanelView, 
-                _screenInputHandler, 
-                _structureConstructService);
-            var upgradeStructurePresenter = new UpgradeStructurePresenter(
-                _upgradeStructurePanelView, 
-                _upgradeStructureService,
-                _screenInputHandler);
-            var endGamePresenter = new EndGamePresenter(_endGamePanelView, _battleControlService, _sceneLoaderService);
-            
+            var infoPanelPresenter = _instantiator.Instantiate<InfoPanelPresenter>(new object[] { _infoPanelView });
+            var battleControllerPresenter = _instantiator.Instantiate<BattleControllerPresenter>(new object[] { _battleStartPanelView });
+            var choseActionPresenter = _instantiator.Instantiate<ChoseActionPresenter>(new object[] { _choseActionPanelView });
+            var endGamePresenter = _instantiator.Instantiate<EndGamePresenter>(new object[] { _endGamePanelView });
+
             infoPanelPresenter.Init();
             battleControllerPresenter.Init();
             choseActionPresenter.Init();
-            upgradeStructurePresenter.Init();
             endGamePresenter.Init();
-            
+
             _disposableCollector.Register(new List<IDisposable>()
             {
                 infoPanelPresenter,
                 battleControllerPresenter,
                 choseActionPresenter,
-                upgradeStructurePresenter,
                 endGamePresenter
             });
+
+            _battleControlService.OnStrongholdCreated += OnStrongholdCreatedHandler;
+        }
+
+        private void OnStrongholdCreatedHandler(Stronghold stronghold)
+        {
+            if (!stronghold.TryGetComponent(out StrongholdViews strongholdViews))
+            {
+                Debug.LogError($"{stronghold.name} has no {nameof(StrongholdViews)}", stronghold);
+                return;
+            }
+
+            var upgradeStructurePresenter = _instantiator.Instantiate<UpgradeStructurePresenter>(
+                new object[] { strongholdViews.UpgradePanel });
+            upgradeStructurePresenter.Init();
+
+            _disposableCollector.Register(upgradeStructurePresenter);
         }
     }
 }

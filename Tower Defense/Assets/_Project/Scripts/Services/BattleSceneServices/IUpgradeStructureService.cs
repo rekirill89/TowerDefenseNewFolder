@@ -7,6 +7,7 @@ namespace _Project.Scripts
         event Action OnStructUpgraded;
 
         void UpgradeStruct(UpgradeStructureEnum upgradeEnum);
+        void SetStronghold(Stronghold stronghold);
         void ResetUpgradeStats();
     }
 }

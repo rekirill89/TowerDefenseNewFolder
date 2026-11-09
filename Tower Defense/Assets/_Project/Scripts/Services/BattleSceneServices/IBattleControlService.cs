@@ -6,6 +6,7 @@ namespace _Project.Scripts
     {
         event Action OnBattleFinished;
         event Action OnBattleStarted;
+        event Action<Stronghold> OnStrongholdCreated;
 
         void Init();
         void StartBattle();

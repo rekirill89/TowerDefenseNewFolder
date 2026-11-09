@@ -10,8 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8f8e393edd98ddb4d9895dc85d250bd2, type: 3}
-  m_Name: EnemySO
-  m_EditorClassIdentifier: Assembly-CSharp::EnemySO
+  m_Name: EnemyConfig
+  m_EditorClassIdentifier: Assembly-CSharp::_Project.Scripts.EnemyConfig
+  <Prefab>k__BackingField: {fileID: 4494342036201473211, guid: e3725b359d9c90a449b221f9d7c99043, type: 3}
   <MaxHealth>k__BackingField: 25
   <Damage>k__BackingField: 20
   <AttackRate>k__BackingField: 1

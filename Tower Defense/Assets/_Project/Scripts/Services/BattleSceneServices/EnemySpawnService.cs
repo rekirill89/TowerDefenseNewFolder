@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using _Project.Scripts;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
 public class EnemySpawnService : IEnemySpawnService
 {
@@ -11,16 +10,12 @@ public class EnemySpawnService : IEnemySpawnService
     public event EnemySpawned OnEnemySpawned;
     
     private readonly List<Enemy> _enemies;
-    private readonly Stronghold _stronghold;
-    private readonly EnemySO _enemySo;
     private readonly ObjectPool<Enemy> _objectPool;
+    private Vector2 _enemiesTarget;
 
-    public EnemySpawnService(Enemy enemyPrefab, Stronghold stronghold, EnemySO enemySo)
+    public EnemySpawnService(IPoolProvider poolProvider)
     {
-        _stronghold = stronghold;
-        _enemySo = enemySo;
-        _objectPool = new ObjectPool<Enemy>(enemyPrefab);
-
+        _objectPool = poolProvider.Get<Enemy>();
         _enemies = new List<Enemy>();
     }
 
@@ -32,11 +27,15 @@ public class EnemySpawnService : IEnemySpawnService
         }
     }
 
+    public void SetEnemiesTarget(Vector2 target)
+    {
+        _enemiesTarget = target;
+    }
+
     public void SpawnEnemy(Vector2 position = default)
     {
-        var enemy = _objectPool.Get(); 
-        enemy.Init(position, _objectPool.Return, _enemySo);
-        enemy.SetTarget(_stronghold.transform.position);
+        var enemy = _objectPool.Get(position); 
+        enemy.SetTarget(_enemiesTarget);
         
         _enemies.Add(enemy);
         OnEnemiesCountChanged?.Invoke(_enemies.Count);

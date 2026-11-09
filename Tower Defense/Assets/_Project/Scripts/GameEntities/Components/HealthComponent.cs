@@ -17,6 +17,7 @@ namespace _Project.Scripts
             _maxInitDefaultHealth = maxDefaultHealth;
             MaxHealth = _maxInitDefaultHealth;
             CurrentHealth = MaxHealth;
+            OnHealthChanged?.Invoke();
         }
     
         public void ChangeHealthByValue(int value)
@@ -48,6 +49,7 @@ namespace _Project.Scripts
         {
             MaxHealth = _maxInitDefaultHealth;
             CurrentHealth = MaxHealth;
+            OnHealthChanged?.Invoke();
             OnHealthChanged?.Invoke();
         }
     }

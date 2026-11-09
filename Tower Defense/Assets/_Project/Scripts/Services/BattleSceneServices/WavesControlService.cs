@@ -10,7 +10,7 @@ public class WavesControlService : IWavesControlService
     public event NewWaveStarted OnNewWaveStarted; 
     public event Action<int> OnTimerIncremented;
     
-    private readonly WavesSO _wavesSO;
+    private readonly WavesConfig _wavesConfig;
     private readonly IEnemySpawnService _enemySpawnService;
     
     private int _totalEnemyAmountPerWave = 0;
@@ -23,11 +23,11 @@ public class WavesControlService : IWavesControlService
     
     private CancellationTokenSource _cts = new CancellationTokenSource();
 
-    public WavesControlService(WavesSO wavesSO, IEnemySpawnService enemySpawnService)
+    public WavesControlService(ConfigProvider configProvider, IEnemySpawnService enemySpawnService)
     {
-        _wavesSO = wavesSO;
+        _wavesConfig = configProvider.GetConfig<WavesConfig>();
         _enemySpawnService = enemySpawnService;
-        _spawnTimestep = _wavesSO.SpawnTimestep;
+        _spawnTimestep = _wavesConfig.SpawnTimestep;
     }
 
     public void Dispose()
@@ -42,7 +42,7 @@ public class WavesControlService : IWavesControlService
         {
             StartWaveAsync().Forget();
             await UniTask.WaitUntil(() => _isWaveFinished, cancellationToken: _cts.Token);
-            await UniTask.WaitForSeconds(_wavesSO.BreakBetweenWavesTimer, cancellationToken: _cts.Token);
+            await UniTask.WaitForSeconds(_wavesConfig.BreakBetweenWavesTimer, cancellationToken: _cts.Token);
         }    
     }
 
@@ -56,7 +56,7 @@ public class WavesControlService : IWavesControlService
     {
         _cts.Cancel();
         _cts = new CancellationTokenSource();
-        _spawnTimestep = _wavesSO.SpawnTimestep;
+        _spawnTimestep = _wavesConfig.SpawnTimestep;
         _waveCurrentIndex = 0;
         _waveCurrentTimer = 0;
     }
@@ -67,17 +67,16 @@ public class WavesControlService : IWavesControlService
         StartWaveTimerAsync().Forget();
 
         _waveCurrentIndex++;
-        //_spawnTimestep -= (_wavesSO.SpawnTimestep * (_waveCurrentIndex * 0.1f));
-        _spawnTimestep -= (_spawnTimestep * _wavesSO.DecreaseSpawnTimestepMultiplier);
-        _totalEnemyAmountPerWave = (int)(_wavesSO.WaveTimer / _spawnTimestep);
+        _spawnTimestep -= (_spawnTimestep * _wavesConfig.DecreaseSpawnTimestepMultiplier);
+        _totalEnemyAmountPerWave = (int)(_wavesConfig.WaveTimer / _spawnTimestep);
         OnNewWaveStarted?.Invoke(_waveCurrentIndex, _totalEnemyAmountPerWave);
         
         while (!_cts.IsCancellationRequested && !_stopWaveFlag)
         {
-            var dirX = Random.Range(_wavesSO.MinDirX, _wavesSO.MaxDirX);
-            var dirY = Random.Range(_wavesSO.MinDirY, _wavesSO.MaxDirY);
+            var dirX = Random.Range(_wavesConfig.MinDirX, _wavesConfig.MaxDirX);
+            var dirY = Random.Range(_wavesConfig.MinDirY, _wavesConfig.MaxDirY);
             var pos = new Vector2(dirX, dirY)
-                .normalized * Random.Range(_wavesSO.MinSpawnDistance, _wavesSO.MaxSpawnDistance);
+                .normalized * Random.Range(_wavesConfig.MinSpawnDistance, _wavesConfig.MaxSpawnDistance);
             
             _enemySpawnService.SpawnEnemy(pos);
 
@@ -95,7 +94,7 @@ public class WavesControlService : IWavesControlService
         int currentSecond = 0;
         int lastReportedSecond = 0;
         
-        while (_waveCurrentTimer < _wavesSO.WaveTimer && !_cts.IsCancellationRequested)
+        while (_waveCurrentTimer < _wavesConfig.WaveTimer && !_cts.IsCancellationRequested)
         {
             await UniTask.Yield(PlayerLoopTiming.Update, cancellationToken: _cts.Token);
             _waveCurrentTimer += Time.deltaTime;

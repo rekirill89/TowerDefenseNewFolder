@@ -11,6 +11,6 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 629c5535f4bbc194993a41f39b2cab15, type: 3}
   m_Name: Arrow
-  m_EditorClassIdentifier: Assembly-CSharp::ProjectileSO
+  m_EditorClassIdentifier: Assembly-CSharp::ProjectileConfig
+  <Prefab>k__BackingField: {fileID: 8709502148072810216, guid: 1968f54d192d4ea4a9737ff118639116, type: 3}
   <Speed>k__BackingField: 20
-  <Damage>k__BackingField: 10

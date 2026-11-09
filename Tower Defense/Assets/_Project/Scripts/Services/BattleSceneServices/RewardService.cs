@@ -13,12 +13,12 @@ namespace _Project.Scripts
         private readonly ISaveLoadService _saveLoadService;
         private readonly ICoinsWallet _coinsWallet;
         private readonly IMetaCurrencyWallet _metaWallet;
-        private RewardsSO _rewardSO;
+        private readonly RewardsConfig _rewardsConfig;
 
         public RewardService(
             IBattleControlService battleControlService,
             IBattleInfoService battleInfoService,
-            RewardsSO rewardsSO,
+            ConfigProvider configProvider,
             IEnemySpawnService enemySpawnService, 
             ISaveLoadService saveLoadService,
             ICoinsWallet coinsWallet,
@@ -30,7 +30,7 @@ namespace _Project.Scripts
             _saveLoadService = saveLoadService;
             _coinsWallet = coinsWallet;
             _metaWallet = metaWallet;
-            _rewardSO = rewardsSO;
+            _rewardsConfig = configProvider.GetConfig<RewardsConfig>();
         }
 
         public void Dispose()
@@ -48,8 +48,8 @@ namespace _Project.Scripts
         private void OnBattleFinishedHandler()
         {
             var info = _battleInfoService.GetInfo();
-            var value = _rewardSO.MetaMoneyPerWave * info.WavesSurvivedAmount +
-                        _rewardSO.MetaMoneyPerEnemy * info.EnemyKilledAmount;
+            var value = _rewardsConfig.MetaMoneyPerWave * info.WavesSurvivedAmount +
+                        _rewardsConfig.MetaMoneyPerEnemy * info.EnemyKilledAmount;
             _metaWallet.Collect(value);
             _saveLoadService.Save(new SaveData(_metaWallet.CurrentBalance));
             Debug.Log("Collected: " + value + ", current balance: " + _metaWallet.CurrentBalance);
@@ -62,9 +62,9 @@ namespace _Project.Scripts
 
         private void OnEnemyKilledHandler(Enemy enemy)
         {
-            _coinsWallet.Collect(_rewardSO.CoinsPerEnemy);
+            _coinsWallet.Collect(_rewardsConfig.CoinsPerEnemy);
             enemy.OnKilled -= OnEnemyKilledHandler;
-            OnRewardGained?.Invoke(RewardEnum.Coins, _rewardSO.CoinsPerEnemy);
+            OnRewardGained?.Invoke(RewardEnum.Coins, _rewardsConfig.CoinsPerEnemy);
         }
     }
 

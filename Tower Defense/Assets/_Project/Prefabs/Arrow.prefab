@@ -71,9 +71,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 7912000573955027674}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: de1ae5074c404586b7280f7d90fcb0b5, type: 3}
+  m_Script: {fileID: 11500000, guid: e12c5d54a78448cb96f8dd1cd4ae3761, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::_Project.Scripts.Projectile
+  m_EditorClassIdentifier: Assembly-CSharp::_Project.Scripts.Arrow
   _damage: 15
 --- !u!61 &3869243140285098700
 BoxCollider2D:

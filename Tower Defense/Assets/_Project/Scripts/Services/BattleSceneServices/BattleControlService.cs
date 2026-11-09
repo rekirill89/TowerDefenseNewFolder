@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
@@ -8,16 +8,17 @@ namespace _Project.Scripts
     {
         public event Action OnBattleFinished;
         public event Action OnBattleStarted;
+        public event Action<Stronghold> OnStrongholdCreated;
 
         private readonly IWavesControlService _wavesControlService;
-        private readonly Stronghold _stronghold;
-        private readonly StrongholdHealthSO _strongholdHealthSO;
         private readonly IEnemySpawnService _enemySpawnService;
         private readonly IStructureConstructService _structureConstructService;
+        private readonly IEntityFactory _entityFactory;
         private readonly ICoinsWallet _coinsWallet;
         private readonly IUpgradeStructureService _upgradeStructureService;
-
         private readonly IBattleInfoService _battleInfoService;
+        private readonly BattleConfig _battleConfig;
+        private Stronghold _stronghold;
 
         private BattleState _state;
 
@@ -25,39 +26,42 @@ namespace _Project.Scripts
             IWavesControlService wavesControlService, 
             IEnemySpawnService enemySpawnService,
             IStructureConstructService structureConstructService,
+            IEntityFactory entityFactory,
             ICoinsWallet coinsWallet,
             IUpgradeStructureService upgradeStructureService,
             IBattleInfoService battleInfoService,
-            Stronghold stronghold,
-            StrongholdHealthSO strongholdHealthSO)
+            ConfigProvider configProvider)
         {
             _wavesControlService = wavesControlService;
             _enemySpawnService = enemySpawnService;
             _structureConstructService = structureConstructService;
+            _entityFactory = entityFactory;
             _coinsWallet = coinsWallet;
             _upgradeStructureService = upgradeStructureService;
             _battleInfoService = battleInfoService;
-            _stronghold = stronghold;
-            _strongholdHealthSO = strongholdHealthSO;
+            _battleConfig = configProvider.GetConfig<BattleConfig>();
         }
 
         public void Dispose()
         {
-            _stronghold.OnDestroyed -= FinishBattle;
+            if (_stronghold != null)
+                _stronghold.OnDestroyed -= FinishBattle;
         }
 
         public void Init()
         {
-            _stronghold.OnDestroyed += FinishBattle;
             _state = BattleState.NotStarted;
         }
 
         public void StartBattle()
         {
             Debug.Log("Battle Started");
-            _stronghold.Init(_strongholdHealthSO);
-            _state = BattleState.InProgress;
+            if (_stronghold == null)
+                CreateStronghold();
+
             _stronghold.StartActing();
+            
+            _state = BattleState.InProgress;
             _wavesControlService.RunWavesLoopAsync().Forget();
         }
 
@@ -66,6 +70,15 @@ namespace _Project.Scripts
             ClearBattlefield();
             StartBattle();
             OnBattleStarted?.Invoke();
+        }
+
+        private void CreateStronghold()
+        {
+            _stronghold = _entityFactory.Create<Stronghold>(_battleConfig.StrongholdPosition);
+            _stronghold.OnDestroyed += FinishBattle;
+            _enemySpawnService.SetEnemiesTarget(_stronghold.transform.position);
+            _upgradeStructureService.SetStronghold(_stronghold);
+            OnStrongholdCreated?.Invoke(_stronghold);
         }
 
         private void FinishBattle()
@@ -81,7 +94,7 @@ namespace _Project.Scripts
 
         private void ClearBattlefield()
         {
-            _stronghold.Reset();
+            _stronghold.ResetState();
             _enemySpawnService.RemoveAllEnemies();
             _structureConstructService.RemoveAllTowers();
             _coinsWallet.ResetBalance();

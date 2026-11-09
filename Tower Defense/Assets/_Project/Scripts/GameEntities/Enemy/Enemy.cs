@@ -7,7 +7,7 @@ namespace _Project.Scripts
 {
     [RequireComponent(typeof(Collider2D))]
     [RequireComponent(typeof(Rigidbody2D))]
-    public class Enemy : MonoBehaviour, IDamageable
+    public class Enemy : GameEntity<EnemyConfig>, IDamageable, IPoolable<Enemy>
     {
         public delegate void Destroyed(Enemy enemy);
 
@@ -18,6 +18,7 @@ namespace _Project.Scripts
         public bool IsAttack { get; private set; } = false;
 
         public HealthComponent HealthComponent { get; private set; }
+        private Action<Enemy> _returnDelegate;
 
         private int _dealingDamage;
         private float _attackRate;
@@ -26,11 +27,12 @@ namespace _Project.Scripts
         private Vector2 _target;
         private Rigidbody2D _rb;
         private CancellationTokenSource _cts = new CancellationTokenSource();
-        private Action<Enemy> _returnDelegate;
-
+        
         private bool _isActing = false;
 
         public void ChangeMoveStatus(bool isMove) => IsMove = isMove;
+
+        public void SetReturnDelegate(Action<Enemy> returnDelegate) => _returnDelegate = returnDelegate;
 
         private void Awake()
         {
@@ -39,12 +41,6 @@ namespace _Project.Scripts
             HealthComponent = new HealthComponent();
 
             HealthComponent.OnHealthZero += OnHealthZeroHandler;
-        }
-
-        private void OnEnable()
-        {
-            _cts = new CancellationTokenSource();
-            HealthComponent.SetHealthOrDefault();
         }
 
         private void FixedUpdate()
@@ -63,8 +59,7 @@ namespace _Project.Scripts
             if (!_isActing)
                 return;
 
-            _moveComponent.RotateTo(_target);
-            //RotateToTarget();
+            RotateToTarget();
         }
 
 
@@ -105,15 +100,10 @@ namespace _Project.Scripts
             }
         }
 
-        public void Init(Vector2 position, Action<Enemy> returnDelegate, EnemySO enemySO)
+        public void OnSpawned()
         {
-            transform.position = position;
-            _returnDelegate = returnDelegate;
-            
-            _moveComponent.Init(enemySO.Speed);
-            HealthComponent.Init(enemySO.MaxHealth);
-            _dealingDamage = enemySO.Damage;
-            _attackRate = enemySO.AttackRate;
+            _cts = new CancellationTokenSource();
+            HealthComponent.ResetHealth();
 
             ChangeMoveStatus(true);
             _isActing = true;
@@ -172,6 +162,14 @@ namespace _Project.Scripts
                 OnTargetAttack?.Invoke();
                 await UniTask.WaitForSeconds(_attackRate, cancellationToken: _cts.Token);
             }
+        }
+
+        protected override void OnInit(EnemyConfig config)
+        {
+            _moveComponent.Init(config.Speed);
+            HealthComponent.Init(config.MaxHealth);
+            _dealingDamage = config.Damage;
+            _attackRate = config.AttackRate;
         }
     }
 }
