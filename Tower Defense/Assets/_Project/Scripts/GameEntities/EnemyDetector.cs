@@ -26,7 +26,7 @@ namespace _Project.Scripts
             {
                 if (!Enemies.Contains(enemy))
                 {
-                    enemy.OnKilled += OnKilledEnemyHandler;
+                    enemy.OnDespawned += OnDespawnedEnemyHandler;
                     Enemies.Add(enemy);
                 }}
         }
@@ -37,7 +37,7 @@ namespace _Project.Scripts
             {
                 if (Enemies.Contains(enemy))
                 {
-                    enemy.OnKilled -= OnKilledEnemyHandler;
+                    enemy.OnDespawned -= OnDespawnedEnemyHandler;
                     Enemies.Remove(enemy);
                 }
             }
@@ -74,9 +74,9 @@ namespace _Project.Scripts
             _circleCollider2D.radius = detectRadius;
         }
 
-        private void OnKilledEnemyHandler(Enemy enemy)
+        private void OnDespawnedEnemyHandler(Enemy enemy)
         {
-            enemy.OnKilled -= OnKilledEnemyHandler;
+            enemy.OnDespawned -= OnDespawnedEnemyHandler;
             Enemies.Remove(enemy);
         }
     }

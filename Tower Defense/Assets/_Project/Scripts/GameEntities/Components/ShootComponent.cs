@@ -76,7 +76,8 @@ namespace _Project.Scripts
         private void Shoot(Vector2 spawnPosition)
         {
             var projectile = _projectilePool.Get(spawnPosition);
-            projectile.Launch(_target.transform, _damage);
+            //projectile.Model.SetTarget(_target.Model);
+            projectile.Model.Launch(_target.Model, _damage);
             projectile.OnDestroyed += OnProjectileDestroyedHandler;
             _projectiles.Add(projectile);
         }

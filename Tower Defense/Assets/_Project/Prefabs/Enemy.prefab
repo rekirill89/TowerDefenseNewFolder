@@ -110,6 +110,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: babad0c5aaa1cd242a73e6a10e0500bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Enemy
+  _visual: {fileID: 8886324948803555095}
 --- !u!1001 &3749804955919008959
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -219,8 +220,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3dd9996b6ff9497c905c22e2c62f8923, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::_Project.Scripts.EnemyVisual
-  _enemy: {fileID: 4494342036201473211}
   _animator: {fileID: 3900264494539909925}
+  _rotationSpeed: 10
 --- !u!95 &3900264494539909925
 Animator:
   serializedVersion: 7

@@ -8,7 +8,7 @@ public class EnemySpawnService : IEnemySpawnService
     public event EnemiesCountChanged OnEnemiesCountChanged;
     public event Action OnEnemyKilled;
     public event EnemySpawned OnEnemySpawned;
-    
+
     private readonly List<Enemy> _enemies;
     private readonly ObjectPool<Enemy> _objectPool;
     private Vector2 _enemiesTarget;
@@ -22,9 +22,7 @@ public class EnemySpawnService : IEnemySpawnService
     public void Dispose()
     {
         foreach (var enemy in _enemies)
-        {
-            enemy.OnKilled -= OnEnemyKilledHandler;
-        }
+            Unsubscribe(enemy);
     }
 
     public void SetEnemiesTarget(Vector2 target)
@@ -34,41 +32,44 @@ public class EnemySpawnService : IEnemySpawnService
 
     public void SpawnEnemy(Vector2 position = default)
     {
-        var enemy = _objectPool.Get(position); 
-        enemy.SetTarget(_enemiesTarget);
-        
+        var enemy = _objectPool.Get(position);
+        enemy.Model.SetTarget(_enemiesTarget);
+
         _enemies.Add(enemy);
+        enemy.OnDied += OnEnemyDiedHandler;
+        enemy.OnDespawned += OnEnemyDespawnedHandler;
+
         OnEnemiesCountChanged?.Invoke(_enemies.Count);
         OnEnemySpawned?.Invoke(enemy);
-        enemy.OnKilled += OnEnemyKilledHandler;
     }
 
     public void StopAllEnemies()
     {
         foreach (var enemy in _enemies)
-        {
-            enemy.StopActing();
-        }
+            enemy.Model.Stop();
     }
 
     public void RemoveAllEnemies()
     {
-        for (int i = _enemies.Count - 1; i >= 0; i--)
-        {
-            _enemies[i].OnKilled -= OnEnemyKilledHandler;
-            _enemies[i].RemoveObject();
-        }
-        _enemies.Clear();
-        OnEnemiesCountChanged?.Invoke(_enemies.Count);    
+        foreach (var enemy in new List<Enemy>(_enemies))
+            enemy.Despawn();
     }
 
-    private void OnEnemyKilledHandler(Enemy enemy)
+    private void OnEnemyDiedHandler(Enemy enemy)
     {
-        enemy.OnKilled -= OnEnemyKilledHandler;
-        if(_enemies.Contains(enemy))
-            _enemies.Remove(enemy);
-
         OnEnemyKilled?.Invoke();
+    }
+
+    private void OnEnemyDespawnedHandler(Enemy enemy)
+    {
+        Unsubscribe(enemy);
+        _enemies.Remove(enemy);
         OnEnemiesCountChanged?.Invoke(_enemies.Count);
+    }
+
+    private void Unsubscribe(Enemy enemy)
+    {
+        enemy.OnDied -= OnEnemyDiedHandler;
+        enemy.OnDespawned -= OnEnemyDespawnedHandler;
     }
 }

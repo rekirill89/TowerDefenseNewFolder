@@ -1,6 +1,4 @@
 using System;
-using System.Threading;
-using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 namespace _Project.Scripts
@@ -9,167 +7,67 @@ namespace _Project.Scripts
     [RequireComponent(typeof(Rigidbody2D))]
     public class Enemy : GameEntity<EnemyConfig>, IDamageable, IPoolable<Enemy>
     {
-        public delegate void Destroyed(Enemy enemy);
+        public event Action<Enemy> OnDied;
+        public event Action<Enemy> OnDespawned;
+        [SerializeField] private EnemyVisual _visual;
+        public EnemyModel Model { get; private set; }
 
-        public event Destroyed OnKilled;
-        public event Action OnTakeHit;
-        public event Action OnTargetAttack;
-        public bool IsMove { get; private set; } = false;
-        public bool IsAttack { get; private set; } = false;
-
-        public HealthComponent HealthComponent { get; private set; }
         private Action<Enemy> _returnDelegate;
-
-        private int _dealingDamage;
-        private float _attackRate;
-
-        private MoveComponent _moveComponent;
-        private Vector2 _target;
-        private Rigidbody2D _rb;
-        private CancellationTokenSource _cts = new CancellationTokenSource();
-        
-        private bool _isActing = false;
-
-        public void ChangeMoveStatus(bool isMove) => IsMove = isMove;
 
         public void SetReturnDelegate(Action<Enemy> returnDelegate) => _returnDelegate = returnDelegate;
 
-        private void Awake()
-        {
-            _rb = GetComponent<Rigidbody2D>();
-            _moveComponent = new MoveComponent(_rb);
-            HealthComponent = new HealthComponent();
+        private void Update() => Model.Tick(Time.deltaTime);
 
-            HealthComponent.OnHealthZero += OnHealthZeroHandler;
-        }
-
-        private void FixedUpdate()
-        {
-            if (!_isActing)
-                return;
-
-            if (!IsMove)
-                return;
-
-            _moveComponent.MoveTo(_target);
-        }
-
-        private void Update()
-        {
-            if (!_isActing)
-                return;
-
-            RotateToTarget();
-        }
-
+        private void FixedUpdate() => Model.FixedTick(Time.fixedDeltaTime);
 
         private void OnDisable()
         {
             transform.position = Vector2.zero;
-            transform.rotation = Quaternion.identity;
-            StopActing();
-            OnKilled?.Invoke(this);
-            _cts.Cancel();
         }
 
         private void OnDestroy()
         {
-            HealthComponent.OnHealthZero -= OnHealthZeroHandler;
-
-            OnKilled?.Invoke(this);
-            _cts.Cancel();
+            if (Model != null)
+                Model.OnDied -= OnModelDiedHandler;
         }
 
         private void OnTriggerEnter2D(Collider2D other)
         {
-            if (!_isActing)
-                return;
-
-            if (other.TryGetComponent<Stronghold>(out var stronghold))
-            {
-                ChangeMoveStatus(false);
-                AttackAsync(stronghold).Forget();
-            }
+            if (other.TryGetComponent(out Stronghold stronghold))
+                Model.ReachTarget(stronghold);
         }
 
         private void OnTriggerExit2D(Collider2D other)
         {
-            if (other.TryGetComponent(out Stronghold stronghold))
-            {
-                _cts.Cancel();
-            }
-        }
-
-        public void OnSpawned()
-        {
-            _cts = new CancellationTokenSource();
-            HealthComponent.ResetHealth();
-
-            ChangeMoveStatus(true);
-            _isActing = true;
-        }
-
-        public void RemoveObject()
-        {
-            transform.position = default;
-            _returnDelegate?.Invoke(this);
-        }
-
-        public void SetTarget(Vector2 target)
-        {
-            _target = target;
-        }
-
-        public void StopActing()
-        {
-            _isActing = false;
-            IsMove = false;
-        }
-
-        public void TakeDamage(int value)
-        {
-            HealthComponent.ChangeHealthByValue(-value);
-            OnTakeHit?.Invoke();
-        }
-
-        private void OnHealthZeroHandler()
-        {
-            RemoveObject();
-        }
-
-        private void RotateToTarget()
-        {
-            Vector3 targetPos = new Vector3(_target.x, _target.y, transform.position.z);
-            Vector3 direction = targetPos - transform.position;
-            direction.z = 0f;
-
-            float targetAngle = Mathf.Atan2(direction.x, direction.y) * Mathf.Rad2Deg;
-
-            float deltaAngle = Mathf.DeltaAngle(transform.eulerAngles.y, targetAngle);
-
-            transform.Rotate(0f, deltaAngle * Time.deltaTime * 10, 0f);
-        }
-
-        private async UniTask AttackAsync(IDamageable target)
-        {
-            IsAttack = true;
-            using var registration = _cts.Token.Register(() => { IsAttack = false; });
-
-            while (_isActing && !_cts.IsCancellationRequested)
-            {
-                target.TakeDamage(_dealingDamage);
-
-                OnTargetAttack?.Invoke();
-                await UniTask.WaitForSeconds(_attackRate, cancellationToken: _cts.Token);
-            }
+            if (other.TryGetComponent(out Stronghold _))
+                Model.LoseTarget();
         }
 
         protected override void OnInit(EnemyConfig config)
         {
-            _moveComponent.Init(config.Speed);
-            HealthComponent.Init(config.MaxHealth);
-            _dealingDamage = config.Damage;
-            _attackRate = config.AttackRate;
+            Model = new EnemyModel(config, new Rigidbody2DBody(GetComponent<Rigidbody2D>()));
+            Model.OnDied += OnModelDiedHandler;
+            _visual.Bind(Model);
+        }
+
+        public void OnSpawned() => Model.Spawn();
+
+        public void TakeDamage(int value) => Model.TakeDamage(value);
+
+        public void Despawn()
+        {
+            if (!gameObject.activeSelf)
+                return;
+
+            Model.Despawn();
+            OnDespawned?.Invoke(this);
+            _returnDelegate?.Invoke(this);
+        }
+
+        private void OnModelDiedHandler(EnemyModel model)
+        {
+            OnDied?.Invoke(this);
+            Despawn();
         }
     }
 }

@@ -35,13 +35,13 @@ namespace _Project.Scripts
 
         public void Dispose()
         {
-            _enemySpawnService.OnEnemySpawned -= OnEnemySpawnedHandler; 
+            _enemySpawnService.OnEnemyKilled -= OnEnemyKilledHandler;
             _battleControlService.OnBattleFinished -= OnBattleFinishedHandler;
         }
 
         public void Init()
         {
-            _enemySpawnService.OnEnemySpawned += OnEnemySpawnedHandler;
+            _enemySpawnService.OnEnemyKilled += OnEnemyKilledHandler;
             _battleControlService.OnBattleFinished += OnBattleFinishedHandler;
         }
 
@@ -55,15 +55,9 @@ namespace _Project.Scripts
             Debug.Log("Collected: " + value + ", current balance: " + _metaWallet.CurrentBalance);
         }
 
-        private void OnEnemySpawnedHandler(Enemy enemy)
-        {
-            enemy.OnKilled += OnEnemyKilledHandler;
-        }
-
-        private void OnEnemyKilledHandler(Enemy enemy)
+        private void OnEnemyKilledHandler()
         {
             _coinsWallet.Collect(_rewardsConfig.CoinsPerEnemy);
-            enemy.OnKilled -= OnEnemyKilledHandler;
             OnRewardGained?.Invoke(RewardEnum.Coins, _rewardsConfig.CoinsPerEnemy);
         }
     }

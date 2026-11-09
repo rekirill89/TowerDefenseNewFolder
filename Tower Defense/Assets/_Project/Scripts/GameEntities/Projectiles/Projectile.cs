@@ -8,12 +8,7 @@ namespace _Project.Scripts
     public class Projectile : GameEntity<ProjectileConfig>, IPoolable<Projectile>
     {
         public event Action<Projectile> OnDestroyed;
-
-        private MoveComponent _moveComponent;
-        private Rigidbody2D _rb;
-        private Transform _target;
-
-        private int _damage;
+        public ProjectileModel Model { get; private set; }
 
         private Action<Projectile> _returnDelegate;
 
@@ -21,20 +16,9 @@ namespace _Project.Scripts
 
         public void OnSpawned() { }
 
-        private void Awake()
-        {
-            _rb =  GetComponent<Rigidbody2D>();
-        }
-
         private void FixedUpdate()
         {
-            _moveComponent.MoveAndRotateTo(_target.position);
-        }
-
-        private void LateUpdate()
-        {
-            if(!_target.gameObject.activeSelf)
-                RemoveThisObject();
+            Model.FixedTick(Time.fixedDeltaTime);
         }
 
         private void OnDisable()
@@ -42,23 +26,16 @@ namespace _Project.Scripts
             transform.position = default;
         }
 
-        public void Launch(Transform target, int damage)
+        private void OnDestroy()
         {
-            _target = target;
-            _damage = damage;
-        }
-
-        private void DealDamage(IDamageable target)
-        {
-            target.TakeDamage(_damage);
+            Model.OnRemove -= RemoveThisObject;
         }
 
         private void OnTriggerEnter2D(Collider2D other)
         {
             if (other.TryGetComponent(out Enemy enemy))
             {
-                DealDamage(enemy);
-                RemoveThisObject();
+                Model.ReachTarget(enemy.Model);
             }
         }
 
@@ -70,8 +47,8 @@ namespace _Project.Scripts
 
         protected override void OnInit(ProjectileConfig config)
         {
-            _moveComponent = new MoveComponent(_rb);
-            _moveComponent.Init(config.Speed);
+            Model = new ProjectileModel(config, new Rigidbody2DBody(GetComponent<Rigidbody2D>()));
+            Model.OnRemove += RemoveThisObject;
         }
     }
 }

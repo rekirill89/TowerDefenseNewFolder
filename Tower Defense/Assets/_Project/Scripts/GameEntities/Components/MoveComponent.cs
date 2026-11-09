@@ -4,12 +4,12 @@ namespace _Project.Scripts
 {
     public class MoveComponent
     {
-        private readonly Rigidbody2D _rb;
+        private readonly IBody2D _body;
         private float _speed;
 
-        public MoveComponent(Rigidbody2D rb)
+        public MoveComponent(IBody2D body)
         {
-            _rb = rb;
+            _body = body;
         }
 
         public void Init(float speed)
@@ -17,33 +17,31 @@ namespace _Project.Scripts
             _speed = speed;
         }
 
-        public void MoveTo(Vector2 target)
+        public void MoveTo(Vector2 target, float deltaTime)
         {
-            var dir = (target - _rb.position).normalized;
-            _rb.MovePosition(_rb.position + dir * _speed * Time.fixedDeltaTime);
+            _body.MovePosition(GetNextPosition(target, deltaTime));
         }
 
         public void RotateTo(Vector2 target)
         {
-            Vector2 direction = target - _rb.position;
-            direction.Normalize();
-
-            float targetAngle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-
-            _rb.MoveRotation(targetAngle);
+            _body.MoveRotation(GetAngleTo(target));
         }
 
-        public void MoveAndRotateTo(Vector2 target)
+        public void MoveAndRotateTo(Vector2 target, float deltaTime)
         {
-            var dir = (target - _rb.position).normalized;
-            Vector2 movement = _rb.position + dir * _speed * Time.fixedDeltaTime;
+            _body.MovePositionAndRotation(GetNextPosition(target, deltaTime), GetAngleTo(target));
+        }
 
-            Vector2 direction = target - _rb.position;
-            direction.Normalize();
+        private Vector2 GetNextPosition(Vector2 target, float deltaTime)
+        {
+            var direction = (target - _body.Position).normalized;
+            return _body.Position + direction * _speed * deltaTime;
+        }
 
-            float targetAngle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-
-            _rb.MovePositionAndRotation(movement, targetAngle);
+        private float GetAngleTo(Vector2 target)
+        {
+            var direction = (target - _body.Position).normalized;
+            return Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
         }
     }
 }
