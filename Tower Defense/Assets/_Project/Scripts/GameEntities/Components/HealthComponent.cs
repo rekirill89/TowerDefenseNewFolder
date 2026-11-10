@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace _Project.Scripts
+namespace _Project.Scripts.GameEntities
 {
     public class HealthComponent
     {
@@ -10,45 +10,39 @@ namespace _Project.Scripts
     
         public int CurrentHealth { get; private set; }
         public int MaxHealth { get; private set; }
-        private readonly int _maxInitDefaultHealth;
+        private  int _initialMaxHealth;
 
-        public HealthComponent(int maxDefaultHealth, int currentHealth = -1)
+        public void Init(int maxHealth)
         {
-            _maxInitDefaultHealth = maxDefaultHealth;
-            MaxHealth = _maxInitDefaultHealth;
-
-            CurrentHealth = currentHealth == -1 ? MaxHealth : currentHealth;
+            _initialMaxHealth = maxHealth;
+            MaxHealth = _initialMaxHealth;
+            CurrentHealth = MaxHealth;
+            OnHealthChanged?.Invoke();
         }
     
-        public void ChangeHealthByValue(int value)
+        public void ChangeHealth(int delta)
         {
-            CurrentHealth = Mathf.Clamp(CurrentHealth + value, 0, MaxHealth);
+            CurrentHealth = Mathf.Clamp(CurrentHealth + delta, 0, MaxHealth);
             OnHealthChanged?.Invoke();
        
             if(CurrentHealth <= 0)
                 OnHealthZero?.Invoke();
         }
 
-        public void SetHealthOrDefault(int value = -1)
-        {
-            if(value == -1)
-                CurrentHealth = MaxHealth;
-            else
-                CurrentHealth = value;
-        }
 
-        public void IncreaseHealth(int value)
+        public void IncreaseMaxHealth(int value)
         {
-            float temp = (float)CurrentHealth / (float)MaxHealth;
+            float healthRatio = (float)CurrentHealth / (float)MaxHealth;
             MaxHealth += value;
-            CurrentHealth = (int)(MaxHealth * temp);
+            CurrentHealth = (int)(MaxHealth * healthRatio);
             OnHealthChanged?.Invoke();
         }
 
         public void ResetHealth()
         {
-            MaxHealth = _maxInitDefaultHealth;
+            MaxHealth = _initialMaxHealth;
             CurrentHealth = MaxHealth;
+            OnHealthChanged?.Invoke();
             OnHealthChanged?.Invoke();
         }
     }

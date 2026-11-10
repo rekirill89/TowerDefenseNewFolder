@@ -1,33 +1,33 @@
 ﻿using System;
 using UnityEngine;
 
-namespace _Project.Scripts
+namespace _Project.Scripts.Services
 {
-    public class MetaCurrencyWallet
+    public class MetaCurrencyWallet : IMetaCurrencyWallet
     {
         public event Action<int> OnBalanceChanged;
-        public int CurrentBalance { get; private set; }
+        public int Balance { get; private set; }
 
-        public MetaCurrencyWallet(int currentBalance)
+        public MetaCurrencyWallet()
         {
-            CurrentBalance = currentBalance;
+            Balance = 0;
         }
 
-        public void SetCurrentBalance(int value)
+        public void SetBalance(int value)
         {
-            CurrentBalance = value;
-            OnBalanceChanged?.Invoke(CurrentBalance);
+            Balance = value;
+            OnBalanceChanged?.Invoke(Balance);
         }
 
-        public void Collect(int value)
+        public void Add(int value)
         {
             if(value < 0 )
             {
-                Debug.LogWarning($"[Economy] Attempted to collect invalid amount: {value}");
+                Debug.LogWarning($"[Economy] Attempted to add invalid amount: {value}");
                 return;
             }
-            CurrentBalance += value;
-            OnBalanceChanged?.Invoke(CurrentBalance);
+            Balance += value;
+            OnBalanceChanged?.Invoke(Balance);
         }
     }
 }

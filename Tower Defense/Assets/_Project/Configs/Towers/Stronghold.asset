@@ -9,10 +9,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b980082ac9724a32a05daea43ae79452, type: 3}
+  m_Script: {fileID: 11500000, guid: 6c751ceaf9c3467ea8d63699d7fde778, type: 3}
   m_Name: Stronghold
-  m_EditorClassIdentifier: Assembly-CSharp::AttackStructureSO
-  <AttackTimer>k__BackingField: 0.5
+  m_EditorClassIdentifier: Assembly-CSharp::_Project.Scripts.StrongholdConfig
+  <Prefab>k__BackingField: {fileID: 6312200697577070966, guid: 0f4df1895bf85a043a3e6c6bfe969d39, type: 3}
+  <AttackInterval>k__BackingField: 0.5
   <AttackRange>k__BackingField: 7
-  <AttackDamage>k__BackingField: 15
+  <Damage>k__BackingField: 15
   <ConstructCost>k__BackingField: 9999
+  <MaxHealth>k__BackingField: 200
+  <DamageCooldown>k__BackingField: 0.3

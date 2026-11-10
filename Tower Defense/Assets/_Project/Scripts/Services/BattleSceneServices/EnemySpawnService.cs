@@ -1,75 +1,73 @@
 using System;
 using System.Collections.Generic;
-using _Project.Scripts;
 using UnityEngine;
-using Object = UnityEngine.Object;
+using _Project.Scripts.GameEntities;
 
-public class EnemySpawnService : IDisposable
+namespace _Project.Scripts.Services
 {
-    public delegate void EnemiesCountChanged(int count);
-    public delegate void EnemySpawned(Enemy enemy);
-    public event EnemiesCountChanged OnEnemiesCountChanged;
-    public event Action OnEnemyKilled;
-    public event EnemySpawned OnEnemySpawned;
-    
-    private readonly List<Enemy> _enemies;
-    private readonly Stronghold _stronghold;
-    private readonly ObjectPool<Enemy> _objectPool;
-
-    public EnemySpawnService(Enemy enemyPrefab, Stronghold stronghold)
+    public class EnemySpawnService : IEnemySpawnService
     {
-        _stronghold = stronghold;
-        _objectPool = new ObjectPool<Enemy>(enemyPrefab);
+        public event Action OnEnemyKilled;
 
-        _enemies = new List<Enemy>();
-    }
+        private readonly List<Enemy> _enemies;
+        private readonly ObjectPool<Enemy> _objectPool;
+        private Vector2 _enemiesDestination;
 
-    public void Dispose()
-    {
-        foreach (var enemy in _enemies)
+        public EnemySpawnService(IPoolProvider poolProvider)
         {
-            enemy.OnKilled -= OnEnemyKilledHandler;
+            _objectPool = poolProvider.Get<Enemy>();
+            _enemies = new List<Enemy>();
         }
-    }
 
-    public void SpawnEnemy(Vector2 position = default)
-    {
-        var enemy = _objectPool.Get(); 
-        enemy.Init(position, _objectPool.Return);
-        enemy.SetTarget(_stronghold.transform.position);
-        
-        _enemies.Add(enemy);
-        OnEnemiesCountChanged?.Invoke(_enemies.Count);
-        OnEnemySpawned?.Invoke(enemy);
-        enemy.OnKilled += OnEnemyKilledHandler;
-    }
-
-    public void StopAllEnemies()
-    {
-        foreach (var enemy in _enemies)
+        public void Dispose()
         {
-            enemy.StopActing();
+            foreach (var enemy in _enemies)
+                Unsubscribe(enemy);
         }
-    }
 
-    public void RemoveAllEnemies()
-    {
-        for (int i = _enemies.Count - 1; i >= 0; i--)
+        public void SetEnemiesDestination(Vector2 destination)
         {
-            _enemies[i].OnKilled -= OnEnemyKilledHandler;
-            _enemies[i].RemoveObject();
+            _enemiesDestination = destination;
         }
-        _enemies.Clear();
-        OnEnemiesCountChanged?.Invoke(_enemies.Count);    
-    }
 
-    private void OnEnemyKilledHandler(Enemy enemy)
-    {
-        enemy.OnKilled -= OnEnemyKilledHandler;
-        if(_enemies.Contains(enemy))
+        public void SpawnEnemy(Vector2 position = default)
+        {
+            var enemy = _objectPool.Get(position);
+            enemy.Model.SetDestination(_enemiesDestination);
+
+            _enemies.Add(enemy);
+            enemy.OnDied += OnEnemyDiedHandler;
+            enemy.OnDespawned += OnEnemyDespawnedHandler;
+
+        }
+
+        public void StopAllEnemies()
+        {
+            foreach (var enemy in _enemies)
+                enemy.Model.Stop();
+        }
+
+        public void RemoveAllEnemies()
+        {
+            foreach (var enemy in new List<Enemy>(_enemies))
+                enemy.Despawn();
+        }
+
+        private void OnEnemyDiedHandler(Enemy enemy)
+        {
+            OnEnemyKilled?.Invoke();
+        }
+
+        private void OnEnemyDespawnedHandler(Enemy enemy)
+        {
+            Unsubscribe(enemy);
             _enemies.Remove(enemy);
+        }
 
-        OnEnemyKilled?.Invoke();
-        OnEnemiesCountChanged?.Invoke(_enemies.Count);
+        private void Unsubscribe(Enemy enemy)
+        {
+            enemy.OnDied -= OnEnemyDiedHandler;
+            enemy.OnDespawned -= OnEnemyDespawnedHandler;
+        }
     }
 }

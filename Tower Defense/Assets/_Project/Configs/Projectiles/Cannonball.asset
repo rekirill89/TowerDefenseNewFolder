@@ -11,6 +11,6 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 629c5535f4bbc194993a41f39b2cab15, type: 3}
   m_Name: Cannonball
-  m_EditorClassIdentifier: Assembly-CSharp::ProjectileSO
+  m_EditorClassIdentifier: Assembly-CSharp::ProjectileConfig
+  <Prefab>k__BackingField: {fileID: 2141450744472843146, guid: 422828cc2411daa419d51ffdbb6565dc, type: 3}
   <Speed>k__BackingField: 40
-  <Damage>k__BackingField: 30

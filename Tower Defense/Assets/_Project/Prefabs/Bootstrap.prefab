@@ -52,6 +52,6 @@ MonoBehaviour:
   _upgradeStrongholdSO: {fileID: 11400000, guid: fc4afd20e82f36449963c7310ee57c1f, type: 2}
   _infoPanelView: {fileID: 0}
   _battleStartPanelView: {fileID: 0}
-  _choseActionPanelView: {fileID: 0}
+  _constructionPanelView: {fileID: 0}
   _upgradeStructurePanelView: {fileID: 0}
   _screenInputHandler: {fileID: 0}

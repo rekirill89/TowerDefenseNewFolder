@@ -1,80 +1,59 @@
-﻿using System;
+using System;
 using UnityEngine;
+using _Project.Scripts.Configs;
 
-namespace _Project.Scripts
+namespace _Project.Scripts.GameEntities
 {
     [RequireComponent(typeof(Rigidbody2D))]
     [RequireComponent(typeof(Collider2D))]
-    public class Projectile : MonoBehaviour
+    public class Projectile : GameEntity<ProjectileConfig>, IPoolable<Projectile>
     {
-        public event Action<Projectile> OnDestroyed;
+        public event Action<Projectile> OnDespawned;
+        public ProjectileModel Model { get; private set; }
+
         private Action<Projectile> _returnDelegate;
-        
-        private ProjectileSO _projectileSO;
-        private MoveComponent _moveComponent;
-        private Rigidbody2D _rb;
-        private Transform _target;
 
-        private int _damage;
-        private float _speed;
-        
-        private void Awake()
+        public void SetReturnDelegate(Action<Projectile> returnDelegate) => _returnDelegate = returnDelegate;
+
+        public void OnSpawned() { }
+
+        protected override void OnInit(ProjectileConfig config)
         {
-            _rb =  GetComponent<Rigidbody2D>();
+            Model = new ProjectileModel(config, new Rigidbody2DBody(GetComponent<Rigidbody2D>()));
+            Model.OnHit += Despawn;
+            Model.OnTargetLost += Despawn;
         }
 
-        private void FixedUpdate()
-        {
-            _moveComponent.MoveAndRotateTo(_target.position);
-        }
-        
-        private void LateUpdate()
-        {
-            if(!_target.gameObject.activeSelf)
-                RemoveThisObject();
-        }
-        
+        private void FixedUpdate() => Model.FixedTick(Time.fixedDeltaTime);
+
         private void OnDisable()
         {
             transform.position = default;
         }
 
-        public void SetTarget(Transform target)
+        private void OnDestroy()
         {
-            _target = target;
-        }
+            if (Model == null)
+                return;
 
-        public void Init(
-            Vector2 position, 
-            Action<Projectile> returnDelegate, 
-            ProjectileSO projectileSO, int damage = -1)
-        {
-            transform.position = position;
-            
-            _returnDelegate =  returnDelegate;
-            _speed = projectileSO.Speed;
-            _damage = damage == -1 ? projectileSO.DefaultDamage : damage;
-            
-            _moveComponent = new MoveComponent(_rb, _speed);
-        }
-
-        private void DealDamage(IDamageable target)
-        {
-            target.TakeDamage(_damage);
+            Model.Cancel();
+            Model.OnHit -= Despawn;
+            Model.OnTargetLost -= Despawn;
         }
 
         private void OnTriggerEnter2D(Collider2D other)
         {
             if (other.TryGetComponent(out Enemy enemy))
-            {
-                DealDamage(enemy);
-                RemoveThisObject();
-            }
+                Model.Hit(enemy.Model);
         }
 
-        private void RemoveThisObject()
+        public void Despawn()
         {
-            OnDestroyed?.Invoke(this);
+            if (!gameObject.activeSelf)
+                return;
+
+            Model.Cancel();
+            OnDespawned?.Invoke(this);
             _returnDelegate?.Invoke(this);
         }
     }

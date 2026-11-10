@@ -1,9 +1,9 @@
 ﻿using System;
 using UnityEngine;
 
-namespace _Project.Scripts
+namespace _Project.Scripts.Services
 {
-    public class SaveLoadService
+    public class SaveLoadService : ISaveLoadService
     {
         private const string META_CURRENCY_BALANCE_KEY = "MetaCurrencyBalance";
         

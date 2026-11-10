@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace _Project.Scripts
+namespace _Project.Scripts.GameEntities
 {
+    [RequireComponent(typeof(Collider2D))]
     public class EnemyDetector : MonoBehaviour
     {
-        [SerializeField] private float _detectRadius = 4;
+        private float _detectionRadius;
         
         public List<Enemy> Enemies { get; private set; }
         private CircleCollider2D _circleCollider2D;
@@ -25,7 +26,7 @@ namespace _Project.Scripts
             {
                 if (!Enemies.Contains(enemy))
                 {
-                    enemy.OnKilled += OnKilledEnemyHandler;
+                    enemy.OnDespawned += OnEnemyDespawnedHandler;
                     Enemies.Add(enemy);
                 }}
         }
@@ -36,16 +37,16 @@ namespace _Project.Scripts
             {
                 if (Enemies.Contains(enemy))
                 {
-                    enemy.OnKilled -= OnKilledEnemyHandler;
+                    enemy.OnDespawned -= OnEnemyDespawnedHandler;
                     Enemies.Remove(enemy);
                 }
             }
         }
 
-        public void Init(float detectRadius = -1)
+        public void Init(float detectionRadius = -1)
         {
-            _detectRadius = Mathf.Approximately(detectRadius, -1f) ? _detectRadius :  detectRadius;
-            SetDetectRadius(detectRadius);
+            _detectionRadius = Mathf.Approximately(detectionRadius, -1f) ? _detectionRadius :  detectionRadius;
+            SetDetectionRadius(detectionRadius);
         }
 
         public Enemy GetClosestEnemy()
@@ -67,15 +68,15 @@ namespace _Project.Scripts
             return _closestEnemy;
         }
 
-        private void SetDetectRadius(float detectRadius)
+        private void SetDetectionRadius(float detectionRadius)
         {
-            _detectRadius = detectRadius;
-            _circleCollider2D.radius = detectRadius;
+            _detectionRadius = detectionRadius;
+            _circleCollider2D.radius = detectionRadius;
         }
 
-        private void OnKilledEnemyHandler(Enemy enemy)
+        private void OnEnemyDespawnedHandler(Enemy enemy)
         {
-            enemy.OnKilled -= OnKilledEnemyHandler;
+            enemy.OnDespawned -= OnEnemyDespawnedHandler;
             Enemies.Remove(enemy);
         }
     }

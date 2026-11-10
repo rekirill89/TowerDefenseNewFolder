@@ -6,6 +6,6 @@ namespace _Project.Scripts.MVP
 {
     public class BattleStartPanelView : BasePanelView
     {
-        [field:SerializeField] public CustomButton StartButton;
+        [field:SerializeField] public CustomButton StartButton {get; private set;}
     }
 }

@@ -1,60 +1,71 @@
-﻿using System;
+using System;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
+using _Project.Scripts.Configs;
+using _Project.Scripts.GameEntities;
 
-namespace _Project.Scripts
+namespace _Project.Scripts.Services
 {
-    public class BattleControlService : IDisposable
+    public class BattleControlService : IBattleControlService
     {
         public event Action OnBattleFinished;
         public event Action OnBattleStarted;
+        public event Action<Stronghold> OnStrongholdCreated;
 
-        private readonly WavesControlService _wavesControlService;
-        private readonly Stronghold _stronghold;
-        private readonly EnemySpawnService _enemySpawnService;
-        private readonly StructureConstructService _structureConstructService;
-        private readonly CoinsWallet _coinsWallet;
-        private readonly UpgradeStructureService _upgradeStructureService;
-
-        private readonly BattleInfoService _battleInfoService;
+        private readonly IWavesControlService _wavesControlService;
+        private readonly IEnemySpawnService _enemySpawnService;
+        private readonly ITowerConstructionService _towerConstructionService;
+        private readonly IEntityFactory _entityFactory;
+        private readonly ICoinsWallet _coinsWallet;
+        private readonly IStrongholdUpgradeService _strongholdUpgradeService;
+        private readonly IBattleInfoService _battleInfoService;
+        private readonly BattleConfig _battleConfig;
+        private Stronghold _stronghold;
+        private StrongholdModel _strongholdModel;
 
         private BattleState _state;
 
         public BattleControlService(
-            WavesControlService wavesControlService, 
-            EnemySpawnService enemySpawnService,
-            StructureConstructService structureConstructService,
-            CoinsWallet coinsWallet,
-            UpgradeStructureService upgradeStructureService,
-            BattleInfoService battleInfoService,
-            Stronghold stronghold)
+            IWavesControlService wavesControlService, 
+            IEnemySpawnService enemySpawnService,
+            ITowerConstructionService towerConstructionService,
+            IEntityFactory entityFactory,
+            ICoinsWallet coinsWallet,
+            IStrongholdUpgradeService strongholdUpgradeService,
+            IBattleInfoService battleInfoService,
+            ConfigProvider configProvider)
         {
             _wavesControlService = wavesControlService;
             _enemySpawnService = enemySpawnService;
-            _structureConstructService = structureConstructService;
+            _towerConstructionService = towerConstructionService;
+            _entityFactory = entityFactory;
             _coinsWallet = coinsWallet;
-            _upgradeStructureService = upgradeStructureService;
+            _strongholdUpgradeService = strongholdUpgradeService;
             _battleInfoService = battleInfoService;
-            _stronghold = stronghold;
+            _battleConfig = configProvider.GetConfig<BattleConfig>();
         }
 
         public void Dispose()
         {
-            _stronghold.OnDestroyed -= FinishBattle;
+            if (_strongholdModel != null)
+                _strongholdModel.OnDestroyed -= FinishBattle;
         }
 
         public void Init()
         {
-            _stronghold.OnDestroyed += FinishBattle;
             _state = BattleState.NotStarted;
         }
 
         public void StartBattle()
         {
             Debug.Log("Battle Started");
+            if (_stronghold == null)
+                CreateStronghold();
+
+            _strongholdModel.Activate();
+            
             _state = BattleState.InProgress;
-            _stronghold.StartActing();
-            _wavesControlService.RunWaveLoopAsync().Forget();
+            _wavesControlService.RunWavesLoopAsync().Forget();
         }
 
         public void RestartBattle()
@@ -64,24 +75,34 @@ namespace _Project.Scripts
             OnBattleStarted?.Invoke();
         }
 
+        private void CreateStronghold()
+        {
+            _stronghold = _entityFactory.Create<Stronghold>(_battleConfig.StrongholdPosition);
+            _strongholdModel = _stronghold.Model;
+            _strongholdModel.OnDestroyed += FinishBattle;
+            _enemySpawnService.SetEnemiesDestination(_stronghold.transform.position);
+            _strongholdUpgradeService.SetStronghold(_strongholdModel);
+            OnStrongholdCreated?.Invoke(_stronghold);
+        }
+
         private void FinishBattle()
         {
             Debug.Log("Battle Finished");
             OnBattleFinished?.Invoke();
-            _wavesControlService.StopWave();
+            _wavesControlService.StopWaves();
             _enemySpawnService.StopAllEnemies();
-            _structureConstructService.StopAllTowers();
+            _towerConstructionService.StopAllTowers();
             
             _state = BattleState.Finished;
         }
 
         private void ClearBattlefield()
         {
-            _stronghold.Reset();
+            _stronghold.ResetState();
             _enemySpawnService.RemoveAllEnemies();
-            _structureConstructService.RemoveAllTowers();
+            _towerConstructionService.RemoveAllTowers();
             _coinsWallet.ResetBalance();
-            _upgradeStructureService.ResetUpgradeStats();
+            _strongholdUpgradeService.ResetUpgradeStats();
             _wavesControlService.Reset();
             _battleInfoService.Reset();
         }

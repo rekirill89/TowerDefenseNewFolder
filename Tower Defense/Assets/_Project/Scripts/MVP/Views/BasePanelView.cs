@@ -14,5 +14,10 @@ namespace _Project.Scripts.MVP
         {
             gameObject.SetActive(false);
         }
+        
+        public void Toggle()
+        {
+            gameObject.SetActive(!gameObject.activeSelf);
+        }
     }
 }
