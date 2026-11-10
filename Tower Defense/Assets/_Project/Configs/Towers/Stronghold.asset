@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: Stronghold
   m_EditorClassIdentifier: Assembly-CSharp::_Project.Scripts.StrongholdConfig
   <Prefab>k__BackingField: {fileID: 6312200697577070966, guid: 0f4df1895bf85a043a3e6c6bfe969d39, type: 3}
-  <AttackTimer>k__BackingField: 0.5
+  <AttackInterval>k__BackingField: 0.5
   <AttackRange>k__BackingField: 7
-  <AttackDamage>k__BackingField: 15
+  <Damage>k__BackingField: 15
   <ConstructCost>k__BackingField: 9999
   <MaxHealth>k__BackingField: 200
-  <TakeDamageTimer>k__BackingField: 0.3
+  <DamageCooldown>k__BackingField: 0.3

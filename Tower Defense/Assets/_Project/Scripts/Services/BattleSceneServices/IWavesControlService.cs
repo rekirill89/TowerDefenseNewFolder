@@ -1,14 +1,15 @@
 ﻿using System;
 using Cysharp.Threading.Tasks;
 
-public delegate void NewWaveStarted(int waveIndex, int totalEnemiesThisWave);
-
-public interface IWavesControlService : IDisposable
+namespace _Project.Scripts.Services
 {
-    event NewWaveStarted OnNewWaveStarted;
-    event Action<int> OnTimerIncremented;
+    public interface IWavesControlService : IDisposable
+    {
+        event Action<int, int> OnNewWaveStarted;
+        event Action<int> OnTimerIncremented;
 
-    UniTask RunWavesLoopAsync();
-    void StopWave();
-    void Reset();
+        UniTask RunWavesLoopAsync();
+        void StopWaves();
+        void Reset();
+    }
 }

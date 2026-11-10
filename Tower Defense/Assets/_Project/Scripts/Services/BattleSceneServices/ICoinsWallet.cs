@@ -1,13 +1,13 @@
-﻿namespace _Project.Scripts
-{
-    public delegate void CoinsChanged(int coins);
+﻿using System;
 
+namespace _Project.Scripts.Services
+{
     public interface ICoinsWallet
     {
-        event CoinsChanged OnCoinsChanged;
-        int CoinsBalance { get; }
+        event Action<int> OnBalanceChanged;
+        int Balance { get; }
 
-        void Collect(int coins);
+        void Add(int coins);
         bool TrySpend(int cost);
         void ResetBalance();
     }

@@ -1,7 +1,7 @@
-using _Project.Scripts.MVP;
 using Zenject;
+using _Project.Scripts.MVP;
 
-namespace _Project.Scripts
+namespace _Project.Scripts.Services
 {
     public class BattleSceneBootstrap : IInitializable
     {
@@ -9,17 +9,17 @@ namespace _Project.Scripts
         private readonly IRewardService _rewardService;
         private readonly IBattleInfoService _battleInfoService;
 
-        private readonly MediatorPresenter _mediatorPresenter;
+        private readonly BattlePresentersRoot _presentersRoot;
 
         public BattleSceneBootstrap(
             IBattleControlService battleControlService,
             IRewardService rewardService,
-            MediatorPresenter mediatorPresenter,
+            BattlePresentersRoot presentersRoot,
             BattleInfoService battleInfoService)
         {
             _battleControlService = battleControlService;
             _rewardService = rewardService;
-            _mediatorPresenter = mediatorPresenter;
+            _presentersRoot = presentersRoot;
             _battleInfoService = battleInfoService;
         }
 
@@ -27,7 +27,7 @@ namespace _Project.Scripts
         {
             _battleControlService.Init();
             _rewardService.Init();
-            _mediatorPresenter.Init();
+            _presentersRoot.Init();
             _battleInfoService.Init();
         }
     }

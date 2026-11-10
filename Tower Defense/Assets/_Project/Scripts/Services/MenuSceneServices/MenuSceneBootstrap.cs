@@ -1,10 +1,10 @@
 ﻿using System;
-using _Project.Scripts.MVP;
 using UnityEngine;
 using UnityEngine.Serialization;
 using Zenject;
+using _Project.Scripts.MVP;
 
-namespace _Project.Scripts
+namespace _Project.Scripts.Services
 {
     public class MenuSceneBootstrap : IInitializable
     {

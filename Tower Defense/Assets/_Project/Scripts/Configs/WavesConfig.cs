@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.Serialization;
 
-namespace _Project.Scripts
+namespace _Project.Scripts.Configs
 {
     [CreateAssetMenu(fileName = "WavesConfig", menuName = "Configs/WavesConfig")]
     public class WavesConfig : BaseConfig
@@ -15,10 +15,10 @@ namespace _Project.Scripts
         [field:SerializeField] public float MaxSpawnDistance { get; private set; }
         
         [field:Header("Wave params")]
-        [field:SerializeField] public float SpawnTimestep { get; private set; }
-        [field:SerializeField] public float WaveTimer { get; private set; }
-        [field:SerializeField] public float BreakBetweenWavesTimer { get; private set; }
-        [field:SerializeField] public float DecreaseSpawnTimestepMultiplier { get; private set; }
+        [field:SerializeField] public float SpawnInterval { get; private set; }
+        [field:SerializeField] public float WaveDuration { get; private set; }
+        [field:SerializeField] public float BreakBetweenWaves { get; private set; }
+        [field:SerializeField] public float SpawnIntervalDecreaseFactor { get; private set; }
         
     }
 }

@@ -1,18 +1,18 @@
 ﻿using System;
 using UnityEngine;
+using _Project.Scripts.Configs;
 
-namespace _Project.Scripts
+namespace _Project.Scripts.Services
 {
     public class RewardService : IRewardService
     {
-        public event RewardGained OnRewardGained;
 
         private readonly IBattleControlService _battleControlService;
         private readonly IBattleInfoService _battleInfoService;
         private readonly IEnemySpawnService _enemySpawnService;
         private readonly ISaveLoadService _saveLoadService;
         private readonly ICoinsWallet _coinsWallet;
-        private readonly IMetaCurrencyWallet _metaWallet;
+        private readonly IMetaCurrencyWallet _metaCurrencyWallet;
         private readonly RewardsConfig _rewardsConfig;
 
         public RewardService(
@@ -22,14 +22,14 @@ namespace _Project.Scripts
             IEnemySpawnService enemySpawnService, 
             ISaveLoadService saveLoadService,
             ICoinsWallet coinsWallet,
-            IMetaCurrencyWallet metaWallet)
+            IMetaCurrencyWallet metaCurrencyWallet)
         {
             _battleControlService = battleControlService;
             _battleInfoService = battleInfoService;
             _enemySpawnService = enemySpawnService;
             _saveLoadService = saveLoadService;
             _coinsWallet = coinsWallet;
-            _metaWallet = metaWallet;
+            _metaCurrencyWallet = metaCurrencyWallet;
             _rewardsConfig = configProvider.GetConfig<RewardsConfig>();
         }
 
@@ -48,22 +48,16 @@ namespace _Project.Scripts
         private void OnBattleFinishedHandler()
         {
             var info = _battleInfoService.GetInfo();
-            var value = _rewardsConfig.MetaMoneyPerWave * info.WavesSurvivedAmount +
-                        _rewardsConfig.MetaMoneyPerEnemy * info.EnemyKilledAmount;
-            _metaWallet.Collect(value);
-            _saveLoadService.Save(new SaveData(_metaWallet.CurrentBalance));
-            Debug.Log("Collected: " + value + ", current balance: " + _metaWallet.CurrentBalance);
+            var value = _rewardsConfig.MetaCurrencyPerWave * info.WavesSurvived +
+                        _rewardsConfig.MetaCurrencyPerEnemy * info.EnemiesKilled;
+            _metaCurrencyWallet.Add(value);
+            _saveLoadService.Save(new SaveData(_metaCurrencyWallet.Balance));
+            Debug.Log("Collected: " + value + ", current balance: " + _metaCurrencyWallet.Balance);
         }
 
         private void OnEnemyKilledHandler()
         {
-            _coinsWallet.Collect(_rewardsConfig.CoinsPerEnemy);
-            OnRewardGained?.Invoke(RewardEnum.Coins, _rewardsConfig.CoinsPerEnemy);
+            _coinsWallet.Add(_rewardsConfig.CoinsPerEnemy);
         }
-    }
-
-    public enum RewardEnum
-    {
-        Coins
     }
 }

@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using _Project.Scripts.Configs;
+using _Project.Scripts.GameEntities;
 
-namespace _Project.Scripts
+namespace _Project.Scripts.Services
 {
     public class ConfigProvider
     {

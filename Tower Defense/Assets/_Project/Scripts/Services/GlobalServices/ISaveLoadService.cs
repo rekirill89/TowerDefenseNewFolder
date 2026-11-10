@@ -1,4 +1,4 @@
-﻿namespace _Project.Scripts
+﻿namespace _Project.Scripts.Services
 {
     public interface ISaveLoadService
     {

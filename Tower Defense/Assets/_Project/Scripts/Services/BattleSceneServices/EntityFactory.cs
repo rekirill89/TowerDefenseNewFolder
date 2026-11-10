@@ -1,7 +1,8 @@
 using UnityEngine;
 using Zenject;
+using _Project.Scripts.GameEntities;
 
-namespace _Project.Scripts
+namespace _Project.Scripts.Services
 {
     public class EntityFactory : IEntityFactory
     {

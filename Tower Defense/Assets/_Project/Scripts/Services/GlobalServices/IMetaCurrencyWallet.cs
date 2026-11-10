@@ -1,13 +1,13 @@
 ﻿using System;
 
-namespace _Project.Scripts
+namespace _Project.Scripts.Services
 {
     public interface IMetaCurrencyWallet
     {
         event Action<int> OnBalanceChanged;
-        int CurrentBalance { get; }
+        int Balance { get; }
 
-        void SetCurrentBalance(int value);
-        void Collect(int value);
+        void SetBalance(int value);
+        void Add(int value);
     }
 }

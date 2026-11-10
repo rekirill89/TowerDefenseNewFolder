@@ -18,6 +18,6 @@ MonoBehaviour:
   <MinDirY>k__BackingField: -1
   <MinSpawnDistance>k__BackingField: 5
   <MaxSpawnDistance>k__BackingField: 10
-  <SpawnTimestep>k__BackingField: 0.5
-  <WaveTimer>k__BackingField: 30
-  <BreakBetweenWavesTimer>k__BackingField: 5
+  <SpawnInterval>k__BackingField: 0.5
+  <WaveDuration>k__BackingField: 30
+  <BreakBetweenWaves>k__BackingField: 5

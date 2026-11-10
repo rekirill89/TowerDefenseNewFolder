@@ -1,22 +1,22 @@
 ﻿using System;
 
-namespace _Project.Scripts
+namespace _Project.Scripts.Services
 {
     public class SaveDataManagementService : ISaveDataManagementService
     {
         private readonly ISaveLoadService _saveLoadService;
-        private readonly IMetaCurrencyWallet _metaWallet;
+        private readonly IMetaCurrencyWallet _metaCurrencyWallet;
 
-        public SaveDataManagementService(ISaveLoadService saveLoadService, IMetaCurrencyWallet metaWallet)
+        public SaveDataManagementService(ISaveLoadService saveLoadService, IMetaCurrencyWallet metaCurrencyWallet)
         {
             _saveLoadService = saveLoadService;
-            _metaWallet = metaWallet;
+            _metaCurrencyWallet = metaCurrencyWallet;
         }
 
         public void Init()
         {
-            var tempData = _saveLoadService.Load(); 
-            _metaWallet.SetCurrentBalance(tempData.MetaCurrencyBalance);
+            var saveData = _saveLoadService.Load(); 
+            _metaCurrencyWallet.SetBalance(saveData.MetaCurrencyBalance);
         }
     }
 }

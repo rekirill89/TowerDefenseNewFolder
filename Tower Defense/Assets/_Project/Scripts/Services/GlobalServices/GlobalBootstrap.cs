@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.Serialization;
 using Zenject;
 
-namespace _Project.Scripts
+namespace _Project.Scripts.Services
 {
     public class GlobalBootstrap : IInitializable
     {

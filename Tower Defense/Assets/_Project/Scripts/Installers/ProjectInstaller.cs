@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
+using _Project.Scripts.Configs;
+using _Project.Scripts.Services;
 
-namespace _Project.Scripts
+namespace _Project.Scripts.Installers
 {
     public class ProjectInstaller : MonoInstaller
     {

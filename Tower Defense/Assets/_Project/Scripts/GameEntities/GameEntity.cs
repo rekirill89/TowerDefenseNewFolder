@@ -1,7 +1,8 @@
 using System;
 using UnityEngine;
+using _Project.Scripts.Configs;
 
-namespace _Project.Scripts
+namespace _Project.Scripts.GameEntities
 {
     public abstract class GameEntity : MonoBehaviour
     {

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace _Project.Scripts
+namespace _Project.Scripts.Configs
 {
     [CreateAssetMenu(fileName = "BattleConfig", menuName = "Configs/BattleConfig")]
     public class BattleConfig : BaseConfig

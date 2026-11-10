@@ -151,7 +151,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::_Project.Scripts.BattleSceneInstaller
   _infoPanelView: {fileID: 478118355}
   _battleStartPanelView: {fileID: 320794631}
-  _choseActionPanelView: {fileID: 1595844497}
+  _constructionPanelView: {fileID: 1595844497}
   _endGamePanelView: {fileID: 472495155}
   _screenInputHandler: {fileID: 191365822}
 --- !u!114 &167228517
@@ -947,7 +947,7 @@ PrefabInstance:
       objectReference: {fileID: 734061697}
     - target: {fileID: 3552388127497110463, guid: 090185686ac82724aabf79b3303d874b, type: 3}
       propertyPath: m_Name
-      value: ChoseActionPanel
+      value: ConstructionPanel
       objectReference: {fileID: 0}
     - target: {fileID: 5555674833462860170, guid: 090185686ac82724aabf79b3303d874b, type: 3}
       propertyPath: m_Pivot.x

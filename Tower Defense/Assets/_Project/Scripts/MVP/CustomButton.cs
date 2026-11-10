@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace _Project.Scripts
+namespace _Project.Scripts.MVP
 {
     [RequireComponent(typeof(Button))]
     public class CustomButton : MonoBehaviour
@@ -13,7 +13,7 @@ namespace _Project.Scripts
         private void Awake()
         {
             _button = GetComponent<Button>();
-            _button.onClick.AddListener(OnCLickHandler);
+            _button.onClick.AddListener(OnClickHandler);
             SetInteractable(true);
         }
 
@@ -27,7 +27,7 @@ namespace _Project.Scripts
             _button.interactable = isInteractable;
         }
         
-        private void OnCLickHandler()
+        private void OnClickHandler()
         {
             OnClick?.Invoke();
         }

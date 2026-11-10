@@ -1,5 +1,4 @@
-﻿using _Project.Scripts.MVP;
-using TMPro;
+﻿using TMPro;
 using UnityEngine;
 
 namespace _Project.Scripts.MVP

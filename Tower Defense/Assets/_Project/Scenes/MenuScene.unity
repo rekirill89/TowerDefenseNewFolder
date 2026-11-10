@@ -842,7 +842,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::_Project.Scripts.MVP.Views.MenuPanelView
   <StartButton>k__BackingField: {fileID: 1645426393}
-  <MetaBalance>k__BackingField: {fileID: 88968938}
+  <MetaBalanceText>k__BackingField: {fileID: 88968938}
 --- !u!114 &1919975653
 MonoBehaviour:
   m_ObjectHideFlags: 0

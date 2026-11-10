@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Cannon
   m_EditorClassIdentifier: Assembly-CSharp::_Project.Scripts.TowerConfig
   <Prefab>k__BackingField: {fileID: 1418308015570212324, guid: b9535eb7b38e92e49971352a787fd206, type: 3}
-  <AttackTimer>k__BackingField: 2
+  <AttackInterval>k__BackingField: 2
   <AttackRange>k__BackingField: 10
-  <AttackDamage>k__BackingField: 50
+  <Damage>k__BackingField: 50
   <ConstructCost>k__BackingField: 20

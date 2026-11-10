@@ -1,30 +1,31 @@
 ﻿using System;
 using UnityEngine;
+using _Project.Scripts.Configs;
 
-namespace _Project.Scripts
+namespace _Project.Scripts.Services
 {
     public class CoinsWallet : ICoinsWallet
     {
-        public event CoinsChanged OnCoinsChanged;
-        public int CoinsBalance {get; private set;}
+        public event Action<int> OnBalanceChanged;
+        public int Balance {get; private set;}
 
-        private readonly int _initCoinsBalance = 0;
+        private readonly int _startBalance = 0;
 
         public CoinsWallet(ConfigProvider configProvider)
         {
-            _initCoinsBalance = configProvider.GetConfig<RewardsConfig>().InitCoinsValue;
-            Collect(_initCoinsBalance);
+            _startBalance = configProvider.GetConfig<RewardsConfig>().StartCoins;
+            Add(_startBalance);
         }
         
-        public void Collect(int coins)
+        public void Add(int coins)
         {
             if(coins < 0 )
             {
-                Debug.LogWarning($"[Economy] Attempted to collect invalid amount: {coins}");
+                Debug.LogWarning($"[Economy] Attempted to add invalid amount: {coins}");
                 return;
             }
-            CoinsBalance += coins;
-            OnCoinsChanged?.Invoke(CoinsBalance);
+            Balance += coins;
+            OnBalanceChanged?.Invoke(Balance);
         }
 
         public bool TrySpend(int cost)
@@ -35,19 +36,19 @@ namespace _Project.Scripts
                 return false;
             }
 
-            if (cost > CoinsBalance)
+            if (cost > Balance)
             {
-                Debug.Log($"[Economy] Insufficient money, balance:{CoinsBalance}/cost:{cost}");
+                Debug.Log($"[Economy] Insufficient money, balance:{Balance}/cost:{cost}");
                 return false;
             }
-            CoinsBalance -= cost;
-            OnCoinsChanged?.Invoke(CoinsBalance);
+            Balance -= cost;
+            OnBalanceChanged?.Invoke(Balance);
             return true;
         }
         
         public void ResetBalance()
         {
-            CoinsBalance = _initCoinsBalance;
+            Balance = _startBalance;
         }
     }
 }

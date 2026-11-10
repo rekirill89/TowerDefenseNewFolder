@@ -1,91 +1,52 @@
-using System.Collections.Generic;
-using System.Threading;
-using Cysharp.Threading.Tasks;
-using UnityEngine;
+using System;
+using _Project.Scripts.Configs;
 
-namespace _Project.Scripts
+namespace _Project.Scripts.GameEntities
 {
     public class ShootComponent
     {
-        private const float NO_ENEMIES_CHECK_TIMER = 0.1f;
+
+        public int Damage { get; private set; }
+        public float AttackInterval { get; private set; }
+
         private readonly TowerConfig _towerConfig;
-        private readonly Transform _rootTransform;
-        private readonly ObjectPool<Projectile> _projectilePool;
-        private readonly List<Projectile> _projectiles = new List<Projectile>(); 
+        private readonly IProjectileLauncher _projectileLauncher;
+        private float _cooldown;
 
-        private Enemy _target; 
-        private int _damage;
-        private float _attackRateTimer;
-        
-        public ShootComponent(
-            ObjectPool<Projectile> projectilePool, 
-            Transform rootTransform,
-            TowerConfig towerConfig)
+        public ShootComponent(TowerConfig towerConfig, IProjectileLauncher projectileLauncher)
         {
-            _projectilePool = projectilePool;
-            _rootTransform = rootTransform;
             _towerConfig = towerConfig;
-            _attackRateTimer = _towerConfig.AttackTimer;
-            _damage = _towerConfig.AttackDamage;
-        }
-        
-        public async UniTask AttackAsync(CancellationTokenSource cts)
-        {
-            while (!cts.IsCancellationRequested)
-            {
-                if (_target != null)
-                {
-                    Shoot(_rootTransform.position);
-                    await UniTask.WaitForSeconds(_attackRateTimer, cancellationToken: cts.Token);
-                }
-                else
-                    await UniTask.WaitForSeconds(NO_ENEMIES_CHECK_TIMER, cancellationToken: cts.Token);
-            }
+            _projectileLauncher = projectileLauncher;
+            ResetStats();
         }
 
-        public void SetTarget(Enemy target)
+        public void Tick(ITarget target, float deltaTime)
         {
-            _target = target;
+            if (_cooldown > 0f)
+                _cooldown -= deltaTime;
+
+            if (target == null || _cooldown > 0f)
+                return;
+
+            _cooldown = AttackInterval;
+            _projectileLauncher.Launch(target, Damage);
         }
 
         public void UpgradeDamage(int extraDamage)
         {
-            _damage += extraDamage;
+            Damage += extraDamage;
         }
-        
+
         public void UpgradeAttackRate(int extraAttackRatePercentage)
         {
-            _attackRateTimer -= (_attackRateTimer * (extraAttackRatePercentage / 100f));
+            AttackInterval -= AttackInterval * (extraAttackRatePercentage / 100f);
         }
 
         public void ResetStats()
         {
-            _damage = _towerConfig.AttackDamage;
-            _attackRateTimer = _towerConfig.AttackTimer;
-        }
-
-        public void RemoveAllProjectiles()
-        {
-            for (int i = _projectiles.Count - 1; i >= 0; i--)
-            {
-                _projectiles[i].OnDestroyed -= OnProjectileDestroyedHandler;
-                _projectiles.RemoveAt(i);
-            }
-        }
-
-        private void Shoot(Vector2 spawnPosition)
-        {
-            var projectile = _projectilePool.Get(spawnPosition);
-            //projectile.Model.SetTarget(_target.Model);
-            projectile.Model.Launch(_target.Model, _damage);
-            projectile.OnDestroyed += OnProjectileDestroyedHandler;
-            _projectiles.Add(projectile);
-        }
-
-        private void OnProjectileDestroyedHandler(Projectile projectile)
-        {
-            projectile.OnDestroyed -= OnProjectileDestroyedHandler;
-            _projectiles.Remove(projectile);
+            Damage = _towerConfig.Damage;
+            AttackInterval = _towerConfig.AttackInterval;
+            _cooldown = 0f;
         }
     }
 }

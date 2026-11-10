@@ -1,15 +1,17 @@
-﻿using _Project.Scripts.MVP;
-using UnityEngine;
+﻿using UnityEngine;
 using Zenject;
+using _Project.Scripts.GameEntities;
+using _Project.Scripts.MVP;
+using _Project.Scripts.Services;
 
-namespace _Project.Scripts
+namespace _Project.Scripts.Installers
 {
     public class BattleSceneInstaller : MonoInstaller
     {
         [Header("Panels")]
         [SerializeField] private InfoPanelView _infoPanelView;
         [SerializeField] private BattleStartPanelView _battleStartPanelView;
-        [SerializeField] private ChoseActionPanelView _choseActionPanelView;
+        [SerializeField] private ConstructionPanelView _constructionPanelView;
         [SerializeField] private EndGamePanelView _endGamePanelView;
 
         [Header("Other scene objects")]
@@ -20,10 +22,10 @@ namespace _Project.Scripts
             Container.BindInterfacesAndSelfTo<EntityFactory>().AsSingle();
             Container.BindInterfacesAndSelfTo<PoolProvider>().AsSingle();
             Container.BindInstance(_screenInputHandler);
-            Container.BindInterfacesAndSelfTo<MediatorPresenter>().AsSingle().WithArguments(
+            Container.BindInterfacesAndSelfTo<BattlePresentersRoot>().AsSingle().WithArguments(
                 _battleStartPanelView,
                 _infoPanelView,
-                _choseActionPanelView,
+                _constructionPanelView,
                 _endGamePanelView);
             Container.BindInterfacesAndSelfTo<CoinsWallet>().AsSingle();
             Container.BindInterfacesAndSelfTo<RewardService>().AsSingle();
@@ -31,8 +33,8 @@ namespace _Project.Scripts
             Container.BindInterfacesAndSelfTo<WavesControlService>().AsSingle();
             Container.BindInterfacesAndSelfTo<BattleControlService>().AsSingle();
             Container.BindInterfacesAndSelfTo<BattleInfoService>().AsSingle();
-            Container.BindInterfacesAndSelfTo<StructureConstructService>().AsSingle();
-            Container.BindInterfacesAndSelfTo<UpgradeStructureService>().AsSingle();
+            Container.BindInterfacesAndSelfTo<TowerConstructionService>().AsSingle();
+            Container.BindInterfacesAndSelfTo<StrongholdUpgradeService>().AsSingle();
             Container.BindInterfacesAndSelfTo<BattleSceneBootstrap>().AsSingle();
         }
     }

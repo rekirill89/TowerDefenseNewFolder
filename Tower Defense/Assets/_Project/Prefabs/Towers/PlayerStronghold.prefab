@@ -264,6 +264,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::_Project.Scripts.Stronghold
   _enemyDetector: {fileID: 69322348855969821}
+  _visual: {fileID: 3999757002895694881}
 --- !u!114 &-3225276993882680373
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -671,7 +672,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a9b79502f3e4baeb65c2204f79dfa3e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::_Project.Scripts.StrongholdVisual
-  _stronghold: {fileID: 6312200697577070966}
   _image: {fileID: 8142908356681463739}
 --- !u!4 &7991248057497968112 stripped
 Transform:

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace _Project.Scripts
+namespace _Project.Scripts.Services
 {
     public class BattleInfoService : IBattleInfoService
     {
@@ -17,14 +17,14 @@ namespace _Project.Scripts
 
         public void Dispose()
         {
-            _enemySpawnService.OnEnemyKilled -= OnEnemyKilledService;
-            _wavesControlService.OnNewWaveStarted -= OnNewWaveStarted;
+            _enemySpawnService.OnEnemyKilled -= OnEnemyKilledHandler;
+            _wavesControlService.OnNewWaveStarted -= OnNewWaveStartedHandler;
         }
 
         public void Init()
         {
-            _enemySpawnService.OnEnemyKilled += OnEnemyKilledService;
-            _wavesControlService.OnNewWaveStarted += OnNewWaveStarted;
+            _enemySpawnService.OnEnemyKilled += OnEnemyKilledHandler;
+            _wavesControlService.OnNewWaveStarted += OnNewWaveStartedHandler;
         }
 
         public BattleInfoData GetInfo()
@@ -37,30 +37,30 @@ namespace _Project.Scripts
             _battleInfoData = new BattleInfoData();
         }
 
-        private void OnNewWaveStarted(int _, int __)
+        private void OnNewWaveStartedHandler(int _, int __)
         {
-            _battleInfoData.IncrementWavesSurvivedAmount();
+            _battleInfoData.AddSurvivedWave();
         }
 
-        private void OnEnemyKilledService()
+        private void OnEnemyKilledHandler()
         {
-            _battleInfoData.IncrementEnemyKilledAmount();
+            _battleInfoData.AddKilledEnemy();
         }
     }
 
     public class BattleInfoData
     {
-        public int EnemyKilledAmount {get; private set;}
-        public int WavesSurvivedAmount {get; private set;}
+        public int EnemiesKilled {get; private set;}
+        public int WavesSurvived {get; private set;}
 
-        public void IncrementEnemyKilledAmount()
+        public void AddKilledEnemy()
         {
-            EnemyKilledAmount++;
+            EnemiesKilled++;
         }
         
-        public void IncrementWavesSurvivedAmount()
+        public void AddSurvivedWave()
         {
-            WavesSurvivedAmount++;
+            WavesSurvived++;
         }
     }
 }

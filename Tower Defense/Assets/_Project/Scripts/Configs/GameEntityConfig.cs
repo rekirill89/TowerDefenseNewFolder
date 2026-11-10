@@ -1,6 +1,7 @@
 using UnityEngine;
+using _Project.Scripts.GameEntities;
 
-namespace _Project.Scripts
+namespace _Project.Scripts.Configs
 {
     public abstract class GameEntityConfig : BaseConfig
     {

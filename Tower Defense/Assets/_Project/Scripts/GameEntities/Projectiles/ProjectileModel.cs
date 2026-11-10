@@ -1,55 +1,74 @@
 ﻿using System;
-using UnityEngine;
+using _Project.Scripts.Configs;
 
-namespace _Project.Scripts
+namespace _Project.Scripts.GameEntities
 {
     public class ProjectileModel
     {
-        public event Action OnRemove;
+        public event Action OnHit;
+        public event Action OnTargetLost;
+
+        public bool IsFlying => _target != null;
+
         private readonly MoveComponent _moveComponent;
-        private EnemyModel _enemyModel;
-
-        private float _currentDeltaTime;
+        private ITarget _target;
         private int _damage;
-        private bool _isReachedFlag = false;
 
-        public ProjectileModel(ProjectileConfig config, IBody2D body2D)
+        public ProjectileModel(ProjectileConfig config, IBody2D body)
         {
-            _moveComponent = new MoveComponent(body2D);
+            _moveComponent = new MoveComponent(body);
             _moveComponent.Init(config.Speed);
+        }
+
+        public void Launch(ITarget target, int damage)
+        {
+            Cancel();
+
+            _target = target;
+            _damage = damage;
+            _target.OnDespawned += OnTargetDespawnedHandler;
         }
 
         public void FixedTick(float deltaTime)
         {
-            _moveComponent.MoveAndRotateTo(_enemyModel.Position, deltaTime);
-        }
-
-        public void Launch(EnemyModel enemyModel, int damage)
-        {
-            _isReachedFlag = false;
-            _enemyModel = enemyModel;
-            _enemyModel.OnDespawned += OnEnemyDespawnedHandler;
-            _damage = damage;
-        }
-
-        public void ReachTarget(IDamageable enemyModel)
-        {
-            if (_isReachedFlag)
+            if (!IsFlying)
                 return;
-            _isReachedFlag = true;
-            enemyModel.TakeDamage(_damage);
-            _enemyModel.OnDespawned -= OnEnemyDespawnedHandler;
-            OnRemove?.Invoke();
+
+            _moveComponent.MoveAndRotateTo(_target.Position, deltaTime);
         }
 
-        private void OnEnemyDespawnedHandler(EnemyModel obj)
+        public void Hit(IDamageable victim)
         {
-            _enemyModel.OnDied -= OnEnemyDespawnedHandler;
-            if (!_isReachedFlag)
-            {
-                _isReachedFlag = true;
-                OnRemove?.Invoke();
-            }
+            if (!IsFlying)
+                return;
+
+            // Release before dealing damage: a killing hit despawns the target,
+            // and the projectile must not also treat that as "target lost".
+            ReleaseTarget();
+            victim.TakeDamage(_damage);
+            OnHit?.Invoke();
+        }
+
+        public void Cancel()
+        {
+            if (IsFlying)
+                ReleaseTarget();
+        }
+
+        private void OnTargetDespawnedHandler(ITarget target)
+        {
+            target.OnDespawned -= OnTargetDespawnedHandler;
+            if (target != _target)
+                return;
+
+            _target = null;
+            OnTargetLost?.Invoke();
+        }
+
+        private void ReleaseTarget()
+        {
+            _target.OnDespawned -= OnTargetDespawnedHandler;
+            _target = null;
         }
     }
 }

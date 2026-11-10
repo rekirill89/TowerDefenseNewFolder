@@ -1,8 +1,9 @@
-﻿using _Project.Scripts.MVP;
-using UnityEngine;
+﻿using UnityEngine;
 using Zenject;
+using _Project.Scripts.MVP;
+using _Project.Scripts.Services;
 
-namespace _Project.Scripts
+namespace _Project.Scripts.Installers
 {
     public class MenuSceneInstaller : MonoInstaller
     {

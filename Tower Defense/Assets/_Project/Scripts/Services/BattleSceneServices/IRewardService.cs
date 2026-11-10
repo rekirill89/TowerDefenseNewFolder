@@ -1,13 +1,9 @@
 ﻿using System;
 
-namespace _Project.Scripts
+namespace _Project.Scripts.Services
 {
-    public delegate void RewardGained(RewardEnum rewardEnum, int amount);
-
     public interface IRewardService : IDisposable
     {
-        event RewardGained OnRewardGained;
-
         void Init();
     }
 }

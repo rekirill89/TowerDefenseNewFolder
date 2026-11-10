@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: RewardsConfig
   m_EditorClassIdentifier: Assembly-CSharp::_Project.Scripts.RewardsConfig
   <CoinsPerEnemy>k__BackingField: 3
-  <MetaMoneyPerEnemy>k__BackingField: 20
-  <MetaMoneyPerWave>k__BackingField: 1
+  <MetaCurrencyPerEnemy>k__BackingField: 20
+  <MetaCurrencyPerWave>k__BackingField: 1
