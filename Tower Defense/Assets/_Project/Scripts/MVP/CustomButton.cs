@@ -19,7 +19,7 @@ namespace _Project.Scripts.MVP
 
         private void OnDestroy()
         {
-            _button.onClick.RemoveAllListeners();
+            _button.onClick.RemoveListener(OnClickHandler);
         }
 
         private void SetInteractable(bool isInteractable)

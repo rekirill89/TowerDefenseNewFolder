@@ -12,12 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e89b3c021744de780528f4ace32f2eb, type: 3}
   m_Name: WavesConfig
   m_EditorClassIdentifier: Assembly-CSharp::_Project.Scripts.WavesConfig
-  <MaxDirX>k__BackingField: 1
-  <MinDirX>k__BackingField: -1
-  <MaxDirY>k__BackingField: 1
-  <MinDirY>k__BackingField: -1
+  <MaxDirectionX>k__BackingField: 10
+  <MinDirectionX>k__BackingField: -10
+  <MaxDirectionY>k__BackingField: 10
+  <MinDirectionY>k__BackingField: -10
   <MinSpawnDistance>k__BackingField: 5
   <MaxSpawnDistance>k__BackingField: 10
   <SpawnInterval>k__BackingField: 0.5
   <WaveDuration>k__BackingField: 30
   <BreakBetweenWaves>k__BackingField: 5
+  <SpawnIntervalDecreaseFactor>k__BackingField: 0

@@ -26,8 +26,6 @@ namespace _Project.Scripts.GameEntities
 
         public void DespawnAllProjectiles()
         {
-            // Despawn вызывает OnDespawned, а обработчик удаляет снаряд из _projectiles,
-            // поэтому перебираем копию
             foreach (var projectile in _projectiles.ToArray())
             {
                 if (projectile != null)

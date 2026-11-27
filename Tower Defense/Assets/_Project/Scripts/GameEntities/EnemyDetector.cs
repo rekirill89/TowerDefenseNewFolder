@@ -8,26 +8,25 @@ namespace _Project.Scripts.GameEntities
     public class EnemyDetector : MonoBehaviour
     {
         private float _detectionRadius;
-        
-        public List<Enemy> Enemies { get; private set; }
+
+        private List<Enemy> _enemies;
         private CircleCollider2D _circleCollider2D;
-        private Enemy _closestEnemy;
         
         private void Awake()
         {
             _circleCollider2D = GetComponent<CircleCollider2D>();
             
-            Enemies = new List<Enemy>();
+            _enemies = new List<Enemy>();
         }
 
         private void OnTriggerEnter2D(Collider2D other)
         {
             if (other.TryGetComponent<Enemy>(out var enemy))
             {
-                if (!Enemies.Contains(enemy))
+                if (!_enemies.Contains(enemy))
                 {
                     enemy.OnDespawned += OnEnemyDespawnedHandler;
-                    Enemies.Add(enemy);
+                    _enemies.Add(enemy);
                 }}
         }
 
@@ -35,10 +34,10 @@ namespace _Project.Scripts.GameEntities
         {
             if (other.TryGetComponent<Enemy>(out var enemy))
             {
-                if (Enemies.Contains(enemy))
+                if (_enemies.Contains(enemy))
                 {
                     enemy.OnDespawned -= OnEnemyDespawnedHandler;
-                    Enemies.Remove(enemy);
+                    _enemies.Remove(enemy);
                 }
             }
         }
@@ -51,21 +50,21 @@ namespace _Project.Scripts.GameEntities
 
         public Enemy GetClosestEnemy()
         {
-            if (Enemies.Count == 0)
+            if (_enemies.Count == 0)
                 return null;
 
-            _closestEnemy = Enemies[0];
-            float closestDistance = float.MaxValue;
-            foreach (var enemy in Enemies)
+            var closestEnemy = _enemies[0];
+            float closestSqrDistance = float.MaxValue;
+            foreach (var enemy in _enemies)
             {
-                var currentDistance = Vector2.Distance(transform.position, enemy.transform.position);
-                if (currentDistance < closestDistance)
+                float sqrDistance = (enemy.transform.position - transform.position).sqrMagnitude;
+                if (sqrDistance < closestSqrDistance)
                 {
-                    closestDistance = currentDistance;
-                    _closestEnemy = enemy;
+                    closestSqrDistance = sqrDistance;
+                    closestEnemy = enemy;
                 }
             }
-            return _closestEnemy;
+            return closestEnemy;
         }
 
         private void SetDetectionRadius(float detectionRadius)
@@ -77,7 +76,7 @@ namespace _Project.Scripts.GameEntities
         private void OnEnemyDespawnedHandler(Enemy enemy)
         {
             enemy.OnDespawned -= OnEnemyDespawnedHandler;
-            Enemies.Remove(enemy);
+            _enemies.Remove(enemy);
         }
     }
 }

@@ -7,10 +7,10 @@ namespace _Project.Scripts.Configs
     public class WavesConfig : BaseConfig
     {
         [field:Header("Spawn direction and distance")]
-        [field:SerializeField] public float MaxDirX { get; private set; }
-        [field:SerializeField] public float MinDirX { get; private set; }
-        [field:SerializeField] public float MaxDirY { get; private set; }
-        [field:SerializeField] public float MinDirY { get; private set; }
+        [field:SerializeField] public float MaxDirectionX { get; private set; }
+        [field:SerializeField] public float MinDirectionX { get; private set; }
+        [field:SerializeField] public float MaxDirectionY { get; private set; }
+        [field:SerializeField] public float MinDirectionY { get; private set; }
         [field:SerializeField] public float MinSpawnDistance { get; private set; }
         [field:SerializeField] public float MaxSpawnDistance { get; private set; }
         

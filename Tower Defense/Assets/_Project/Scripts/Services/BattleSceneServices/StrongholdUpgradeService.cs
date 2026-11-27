@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEngine;
 using Object = UnityEngine.Object;
 using _Project.Scripts.Configs;
 using _Project.Scripts.GameEntities;
@@ -50,7 +51,7 @@ namespace _Project.Scripts.Services
         {
             if(!_coinsWallet.TrySpend(_runtimeConfig.DamageUpgradeUnit.CostPerLevel))
                 return;
-            _stronghold.UpgradeDamage((int)_runtimeConfig.DamageUpgradeUnit.ValuePerLevel);
+            _stronghold.UpgradeDamage(Mathf.RoundToInt(_runtimeConfig.DamageUpgradeUnit.ValuePerLevel));
             _runtimeConfig.DamageUpgradeUnit.NextLevel();
         }
 
@@ -58,7 +59,7 @@ namespace _Project.Scripts.Services
         {
             if(!_coinsWallet.TrySpend(_runtimeConfig.AttackRateUpgradeUnit.CostPerLevel))
                 return;
-            _stronghold.UpgradeAttackRate((int)_runtimeConfig.AttackRateUpgradeUnit.ValuePerLevel);
+            _stronghold.UpgradeAttackRate(Mathf.RoundToInt(_runtimeConfig.AttackRateUpgradeUnit.ValuePerLevel));
             _runtimeConfig.AttackRateUpgradeUnit.NextLevel();
         }
 
@@ -66,7 +67,7 @@ namespace _Project.Scripts.Services
         {
            if(!_coinsWallet.TrySpend(_runtimeConfig.HealthUpgradeUnit.CostPerLevel))
                return;
-           _stronghold.IncreaseMaxHealth((int)_runtimeConfig.HealthUpgradeUnit.ValuePerLevel);
+           _stronghold.IncreaseMaxHealth(Mathf.RoundToInt(_runtimeConfig.HealthUpgradeUnit.ValuePerLevel));
            _runtimeConfig.HealthUpgradeUnit.NextLevel();
         }
     }

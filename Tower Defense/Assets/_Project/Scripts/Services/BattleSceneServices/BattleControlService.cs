@@ -1,6 +1,5 @@
 using System;
 using Cysharp.Threading.Tasks;
-using UnityEngine;
 using _Project.Scripts.Configs;
 using _Project.Scripts.GameEntities;
 
@@ -58,7 +57,6 @@ namespace _Project.Scripts.Services
 
         public void StartBattle()
         {
-            Debug.Log("Battle Started");
             if (_stronghold == null)
                 CreateStronghold();
 
@@ -87,7 +85,6 @@ namespace _Project.Scripts.Services
 
         private void FinishBattle()
         {
-            Debug.Log("Battle Finished");
             OnBattleFinished?.Invoke();
             _wavesControlService.StopWaves();
             _enemySpawnService.StopAllEnemies();

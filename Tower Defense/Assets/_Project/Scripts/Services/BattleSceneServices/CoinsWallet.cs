@@ -41,6 +41,7 @@ namespace _Project.Scripts.Services
                 Debug.Log($"[Economy] Insufficient money, balance:{Balance}/cost:{cost}");
                 return false;
             }
+
             Balance -= cost;
             OnBalanceChanged?.Invoke(Balance);
             return true;
