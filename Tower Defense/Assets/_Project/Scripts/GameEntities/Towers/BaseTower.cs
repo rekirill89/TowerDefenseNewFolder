@@ -25,13 +25,16 @@ namespace _Project.Scripts.GameEntities
 
         protected virtual void Update()
         {
-            Model.SetTarget(_enemyDetector.GetClosestEnemy()?.Model);
+            var enemy = _enemyDetector.GetClosestEnemy();
+            if(enemy != null)
+                Model.SetTarget(enemy.Model);
             Model.Tick(Time.deltaTime);
         }
 
         protected virtual void OnDestroy()
         {
-            Launcher?.DespawnAllProjectiles();
+            if(Launcher != null)
+                Launcher.DespawnAllProjectiles();
         }
 
         protected virtual TowerModel CreateModel(TowerConfig config)

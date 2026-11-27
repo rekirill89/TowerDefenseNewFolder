@@ -23,7 +23,7 @@ namespace _Project.Scripts.Services
         private bool _isWaveFinished = false;
         private bool _isWaveTimeOver = false;
         
-        private CancellationTokenSource _cts = new CancellationTokenSource();
+        private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
 
         public WavesControlService(ConfigProvider configProvider, IEnemySpawnService enemySpawnService)
         {
@@ -34,30 +34,30 @@ namespace _Project.Scripts.Services
 
         public void Dispose()
         {
-            _cts.Cancel();
-            _cts.Dispose();
+            _cancellationTokenSource.Cancel();
+            _cancellationTokenSource.Dispose();
         }
 
         public async UniTask RunWavesLoopAsync()
         {
-            while (!_cts.IsCancellationRequested)
+            while (!_cancellationTokenSource.IsCancellationRequested)
             {
                 RunWaveAsync().Forget();
-                await UniTask.WaitUntil(() => _isWaveFinished, cancellationToken: _cts.Token);
-                await UniTask.WaitForSeconds(_wavesConfig.BreakBetweenWaves, cancellationToken: _cts.Token);
+                await UniTask.WaitUntil(() => _isWaveFinished, cancellationToken: _cancellationTokenSource.Token);
+                await UniTask.WaitForSeconds(_wavesConfig.BreakBetweenWaves, cancellationToken: _cancellationTokenSource.Token);
             }    
         }
 
 
         public void StopWaves()
         {
-            _cts.Cancel();
+            _cancellationTokenSource.Cancel();
         }
 
         public void Reset()
         {
-            _cts.Cancel();
-            _cts = new CancellationTokenSource();
+            _cancellationTokenSource.Cancel();
+            _cancellationTokenSource = new CancellationTokenSource();
             _spawnInterval = _wavesConfig.SpawnInterval;
             _currentWaveIndex = 0;
             _waveElapsedTime = 0;
@@ -73,16 +73,16 @@ namespace _Project.Scripts.Services
             _enemiesInCurrentWave = (int)(_wavesConfig.WaveDuration / _spawnInterval);
             OnNewWaveStarted?.Invoke(_currentWaveIndex, _enemiesInCurrentWave);
             
-            while (!_cts.IsCancellationRequested && !_isWaveTimeOver)
+            while (!_cancellationTokenSource.IsCancellationRequested && !_isWaveTimeOver)
             {
-                var dirX = Random.Range(_wavesConfig.MinDirX, _wavesConfig.MaxDirX);
-                var dirY = Random.Range(_wavesConfig.MinDirY, _wavesConfig.MaxDirY);
-                var position = new Vector2(dirX, dirY)
+                var directionX = Random.Range(_wavesConfig.MinDirectionX, _wavesConfig.MaxDirectionX);
+                var directionY = Random.Range(_wavesConfig.MinDirectionY, _wavesConfig.MaxDirectionY);
+                var position = new Vector2(directionX, directionY)
                     .normalized * Random.Range(_wavesConfig.MinSpawnDistance, _wavesConfig.MaxSpawnDistance);
                 
                 _enemySpawnService.SpawnEnemy(position);
 
-                await UniTask.WaitForSeconds(_spawnInterval, cancellationToken: _cts.Token);
+                await UniTask.WaitForSeconds(_spawnInterval, cancellationToken: _cancellationTokenSource.Token);
             }
 
             _isWaveFinished = true;
@@ -96,9 +96,9 @@ namespace _Project.Scripts.Services
             int currentSecond = 0;
             int lastReportedSecond = 0;
             
-            while (_waveElapsedTime < _wavesConfig.WaveDuration && !_cts.IsCancellationRequested)
+            while (_waveElapsedTime < _wavesConfig.WaveDuration && !_cancellationTokenSource.IsCancellationRequested)
             {
-                await UniTask.Yield(PlayerLoopTiming.Update, cancellationToken: _cts.Token);
+                await UniTask.Yield(PlayerLoopTiming.Update, cancellationToken: _cancellationTokenSource.Token);
                 _waveElapsedTime += Time.deltaTime;
                 currentSecond = (int)_waveElapsedTime;
                 

@@ -26,27 +26,27 @@ namespace _Project.Scripts.Services
             if (_pool.Count == 0)
                 Fill();
 
-            var obj = _pool.Pop();
-            obj.transform.position = position;
-            obj.gameObject.SetActive(true);
-            obj.OnSpawned();
-            return obj;
+            var pooledObject = _pool.Pop();
+            pooledObject.transform.position = position;
+            pooledObject.gameObject.SetActive(true);
+            pooledObject.OnSpawned();
+            return pooledObject;
         }
 
-        public void Return(T obj)
+        public void Return(T pooledObject)
         {
-            obj.gameObject.SetActive(false);
-            _pool.Push(obj);
+            pooledObject.gameObject.SetActive(false);
+            _pool.Push(pooledObject);
         }
 
         private void Fill()
         {
             for (int i = 0; i < _capacity; i++)
             {
-                var obj = _create();
-                obj.SetReturnDelegate(Return);
-                obj.gameObject.SetActive(false);
-                _pool.Push(obj);
+                var pooledObject = _create();
+                pooledObject.SetReturnDelegate(Return);
+                pooledObject.gameObject.SetActive(false);
+                _pool.Push(pooledObject);
             }
         }
     }

@@ -1,6 +1,7 @@
 ﻿using System;
 using UnityEngine;
-using UnityEngine.InputSystem;
+using UnityEngine.EventSystems;
+using Zenject;
 
 namespace _Project.Scripts.GameEntities
 {
@@ -16,6 +17,10 @@ namespace _Project.Scripts.GameEntities
         private LayerMask _strongholdLayerMask;
 
         private Camera _mainCamera;
+        private InputActions _input;
+
+        [Inject]
+        private void Construct(InputActions input) => _input = input;
         
         private void Start()
         {
@@ -24,32 +29,40 @@ namespace _Project.Scripts.GameEntities
             
             _mainCamera = Camera.main;
         }
+        
+        private void OnEnable() => _input.Gameplay.Enable();
+
+        private void OnDisable() => _input.Gameplay.Disable();
 
         private void Update()
         {
+            if (!_input.Gameplay.Select.WasPerformedThisFrame())
+                return;
+            
+            if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
+                return;
 
-            if (Mouse.current.rightButton.wasPressedThisFrame)
-                HandleClick();
+            HandleClick(_input.Gameplay.PointerPosition.ReadValue<Vector2>());
         }
         
-        private void HandleClick()
+        private void HandleClick(Vector2 screenPosition)
         {
-            if (_mainCamera == null) return;
+            if (_mainCamera == null)
+                return;
 
-            Vector2 mousePos = Mouse.current.position.ReadValue();
-            Vector2 mouseWorldPos = _mainCamera.ScreenToWorldPoint(mousePos);
-
-            Collider2D strongholdHit = Physics2D.OverlapPoint(mouseWorldPos, _strongholdLayerMask);
+            Vector2 worldPosition = _mainCamera.ScreenToWorldPoint(screenPosition);
+            
+            Collider2D strongholdHit = Physics2D.OverlapPoint(worldPosition, _strongholdLayerMask);
             if (strongholdHit != null)
             {
                 OnStrongholdClicked?.Invoke();
                 return; 
             }
 
-            Collider2D buildableHit = Physics2D.OverlapPoint(mouseWorldPos, _buildableLayerMask);
+            Collider2D buildableHit = Physics2D.OverlapPoint(worldPosition, _buildableLayerMask);
             if (buildableHit != null)
             {
-                OnBuildableClicked?.Invoke(mouseWorldPos);
+                OnBuildableClicked?.Invoke(worldPosition);
             }
         }
     }

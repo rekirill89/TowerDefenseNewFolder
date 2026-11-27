@@ -23,7 +23,6 @@ namespace _Project.Scripts.Configs
         public void NextLevel()
         {
             ValuePerLevel += ValuePerLevel * (ValueGrowthPercent / 100);
-            CostPerLevel += (int)(CostPerLevel * (CostGrowthPercent / 100));
-        }
+            CostPerLevel += Mathf.RoundToInt((CostPerLevel * (CostGrowthPercent / 100)));        }
     }
 }

@@ -12,6 +12,7 @@ namespace _Project.Scripts.Installers
 
         public override void InstallBindings()
         {
+            Container.BindInterfacesAndSelfTo<InputActions>().AsSingle();
             Container.BindInterfacesAndSelfTo<SaveLoadService>().AsSingle();
             Container.BindInterfacesAndSelfTo<SaveDataManagementService>().AsSingle();
             Container.BindInterfacesAndSelfTo<MetaCurrencyWallet>().AsSingle();

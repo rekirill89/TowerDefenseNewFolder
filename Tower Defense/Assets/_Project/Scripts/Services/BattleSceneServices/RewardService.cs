@@ -6,7 +6,6 @@ namespace _Project.Scripts.Services
 {
     public class RewardService : IRewardService
     {
-
         private readonly IBattleControlService _battleControlService;
         private readonly IBattleInfoService _battleInfoService;
         private readonly IEnemySpawnService _enemySpawnService;
